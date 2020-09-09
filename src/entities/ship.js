@@ -38,6 +38,8 @@ export class Ship extends GameObject {
         const bullet = this.createBullet();
 
         this.game.instantiateEntity(bullet);
+        const newAudio = document.getElementById('audio-shoot').cloneNode();
+        newAudio.play();
     }
 
     moveBullet() {
@@ -113,6 +115,8 @@ export class Ship extends GameObject {
             }
 
             if (this.checkBulletHit(b)) {
+                const newAudio = document.getElementById('audio-hit').cloneNode();
+                newAudio.play();
                 b.destroy();
             }
         });
@@ -120,5 +124,8 @@ export class Ship extends GameObject {
 
     onDestroy() {
         this.game.entities.filter(e => e.tag == this.bulletTag).forEach(bullet => bullet.destroy());
+        
+        const newAudio = document.getElementById('audio-explosion').cloneNode();
+        newAudio.play();
     }
 }

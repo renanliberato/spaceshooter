@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "parcel index.html"
+    "start": "parcel index.html",
+    "build": "parcel build ./index.html --public-url ./opensource/spaceshooter --no-source-maps"
   },
   "author": "",
   "license": "ISC",

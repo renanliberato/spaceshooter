@@ -93,6 +93,7 @@ export class Player extends Ship {
     }
 
     onDestroy() {
+        super.onDestroy();
         document.dispatchEvent(new Event('player_destroyed'));
     }
 }

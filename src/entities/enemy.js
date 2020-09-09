@@ -50,6 +50,7 @@ export class Enemy extends Ship {
     }
 
     onDestroy() {
+        super.onDestroy();
         this.game.entities.filter(e => e.tag == 'enemybullet').forEach(bullet => bullet.destroy());
         document.dispatchEvent(new Event('enemy_destroyed'));
     }

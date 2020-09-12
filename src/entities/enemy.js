@@ -2,56 +2,56 @@ import { Ship } from './ship';
 
 export class Enemy extends Ship {
     constructor(game) {
-        super(game);
+        super(game, 'red');
 
-        this.bulletTag = 'enemybullet';
         this.tag = 'enemy';
-        this.curCommand = 'right';
-        this.isFiring = true;
-
-        this.object.width = game.sizeFromWidth(5);
-        this.object.height = game.sizeFromWidth(5);
-        this.object.fill = 'red';
-        this.object.left = game.canvas.getWidth() / 2 - this.object.width / 2;
-        this.object.top = this.game.ui.enemyHealthBar.top + this.game.ui.enemyHealthBar.height + this.game.sizeFromHeight(6);
-        this.object.rotate(180);
-        this.object.setCoords();
+        this.maxHealth = 1;
+        this.health = 1;
+        this.bulletTargetTag = 'player';
     }
 
-    moveShip() {
-        super.moveShip();
+    update() {
+        super.update();
 
-        if (Math.random() <= 0.01) {
-            console.log('inverting');
-            this.curCommand = this.curCommand == 'right' ? 'left' : 'right';
+        const players = this.game.entities.filter(e => e.tag == 'player');
+        if (players.length == 0) {
+            return;
+        }
+
+        const player = players[0];
+
+        const distanceFromPlayer = Math.abs((this.x - player.x + this.y - player.y) / 2);
+
+        const isFarFromPlayer = distanceFromPlayer > 120;
+
+        this.isFiring = false;
+        this.acceleratingFrontwards = false;
+        this.acceleratingBackwards = false;
+        
+        if (this.shouldAct()) {
+            const angleTowardsPlayer = this.getAngleTowardsObject(player);
+            this.rotateToAngle(angleTowardsPlayer);
+
+            if (isFarFromPlayer) {
+                this.acceleratingFrontwards = true;
+                this.acceleratingBackwards = false;
+            } else {
+                this.isFiring = true;
+            }
         }
     }
 
-    takeDamage(amount) {
-        this.health -= amount;
-
-        if (this.health <= 0) {
-            this.destroy();
-        }
-    }
-
-    moveBullet(obj) {
-        obj.top += this.bulletSpeed;
-    }
-
-    checkBulletHit(b) {
-        if (b.object.intersectsWithObject(this.game.player.object)) {
-            this.game.player.takeDamage(1);
-
-            return true;
-        }
-
-        return false;
+    shouldAct() {
+        return Math.random() > 0.5;
     }
 
     onDestroy() {
         super.onDestroy();
-        this.game.entities.filter(e => e.tag == 'enemybullet').forEach(bullet => bullet.destroy());
-        document.dispatchEvent(new Event('enemy_destroyed'));
+
+        document.dispatchEvent(new CustomEvent('enemy_destroyed', {
+            detail: {
+                enemiesLeft: this.game.entities.filter(e => e.tag == 'enemy' && !e.destroyed).length
+            }
+        }));
     }
 }

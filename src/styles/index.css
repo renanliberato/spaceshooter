@@ -15,6 +15,10 @@ body, div {
     flex-direction: column;
 }
 
+#arena-container {
+    flex: 1;
+}
+
 #root {
     flex: 1
 }

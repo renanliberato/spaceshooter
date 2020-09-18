@@ -2,6 +2,8 @@ const fabric = require('fabric').fabric;
 import { Player } from './entities/player';
 import { Enemy } from './entities/enemy';
 import { Wall } from './entities/wall';
+import { HubConnectionBuilder } from '@microsoft/signalr';
+import { EnemyPlayer } from './entities/enemyPlayer';
 
 export const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
@@ -46,6 +48,10 @@ export const initGame = (cancellationToken, height) => {
         sizeFromWidth: (unit) => unit * width / 100,
         paddingH: 10,
         paddingV: 10,
+        isConnected: false,
+        connection: {
+            invoke: () => { }
+        }
     };
 
     game.ui.playerHealthBar = new fabric.Rect({
@@ -57,18 +63,65 @@ export const initGame = (cancellationToken, height) => {
         fill: 'red',
     });
 
-    // game.ui.coordsText = new fabric.Text('x: 0, y: 0', {
-    //     selectable: false,
-    //     top: 100,
-    //     left: 20,
-    //     fill: '#fff',
-    //     fontSize: 12
-    // });
-    // game.canvas.add(game.ui.coordsText);
+    game.ui.coordsText = new fabric.Text('x: 0, y: 0', {
+        selectable: false,
+        top: 100,
+        left: 20,
+        fill: '#fff',
+        fontSize: 12
+    });
+    game.canvas.add(game.ui.coordsText);
 
     game.canvas.add(game.ui.playerHealthBar);
     game.player = new Player(game);
     game.instantiateEntity(game.player);
+
+    var simplerConnection = new HubConnectionBuilder()
+        .withUrl("https://renanliberato-spaceshooterserver.azurewebsites.net/simplermatchhub")
+        .withAutomaticReconnect()
+        .build();
+
+    simplerConnection.on("ShipAddedtoGame", function (id) {
+        var enemy = new EnemyPlayer(game);
+        enemy.id = id;
+        game.instantiateEntity(enemy);
+    });
+
+    simplerConnection.on("ShipPositionUpdated", function (id, x, y, angle, health) {
+        var enemy = game.entities.find(e => e.id == id);
+        enemy.moveTo(x, y);
+        enemy.rotateToAngle(angle);
+        enemy.updateHealth(health);
+    });
+
+    simplerConnection.start().then(function () {
+        game.isConnected = true;
+        simplerConnection.invoke("AddShipToGame", game.player.id);
+        console.log('connected')
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    game.connection = simplerConnection;
+
+    // var connection = new HubConnectionBuilder()
+    //     .withUrl("https://localhost:5001/match")
+    //     .withAutomaticReconnect()
+    //     .build();
+
+    // connection.on("MatchStateUpdated", function (state) {
+    //     const stateAsObject = JSON.parse(state);
+    //     game.player.moveTo(stateAsObject.PlayerState.X, stateAsObject.PlayerState.Y);
+    //     game.player.rotateToAngle(stateAsObject.PlayerState.Angle);
+    // });
+
+    // connection.start().then(function () {
+    //     console.log('connected')
+    // }).catch(function (err) {
+    //     return console.error(err.toString());
+    // });
+
+    // game.connection = connection;
 
     // top wall
     var i = -45;
@@ -98,12 +151,12 @@ export const initGame = (cancellationToken, height) => {
         i += 25;
     }
 
-    [...Array(5).keys()].forEach(element => {
-        var enemy = new Enemy(game);
-        enemy.x = Math.random() * game.map.width;
-        enemy.y = Math.random() * game.map.height;
-        game.instantiateEntity(enemy);
-    });
+    // [...Array(5).keys()].forEach(element => {
+    //     var enemy = new Enemy(game);
+    //     enemy.x = Math.random() * game.map.width;
+    //     enemy.y = Math.random() * game.map.height;
+    //     game.instantiateEntity(enemy);
+    // });
 
     game.time = 0;
     var lastUpdate = Date.now();
@@ -130,17 +183,17 @@ export const initGame = (cancellationToken, height) => {
             y2: game.player.y + game.canvas.getHeight() / 2,
         }
 
-        // game.canvas.remove(game.ui.coordsText);
-        // game.ui.coordsText = new fabric.Text(
-        //     `x: ${game.visibleArea.x.toFixed(0)}, x2: ${game.visibleArea.x2.toFixed(0)}\ny: ${game.visibleArea.y.toFixed(0)}, y2: ${game.visibleArea.y2.toFixed(0)}\n\nplayerx: ${game.player.x.toFixed(0)}, playery: ${game.player.y.toFixed(0)}\n\nfps: ${((1000 / dt) / 1000).toFixed(0)}`,
-        //     {
-        //         selectable: false,
-        //         top: 100,
-        //         left: 20,
-        //         fill: 'white',
-        //         fontSize: 12
-        //     });
-        // game.canvas.add(game.ui.coordsText);
+        game.canvas.remove(game.ui.coordsText);
+        game.ui.coordsText = new fabric.Text(
+            `x: ${game.visibleArea.x.toFixed(0)}, x2: ${game.visibleArea.x2.toFixed(0)}\ny: ${game.visibleArea.y.toFixed(0)}, y2: ${game.visibleArea.y2.toFixed(0)}\n\nplayerx: ${game.player.x.toFixed(0)}, playery: ${game.player.y.toFixed(0)}\n\nfps: ${((1000 / dt) / 1000).toFixed(0)}`,
+            {
+                selectable: false,
+                top: 100,
+                left: 20,
+                fill: 'white',
+                fontSize: 12
+            });
+        game.canvas.add(game.ui.coordsText);
 
         game.entities.forEach(e => e.update());
 

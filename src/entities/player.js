@@ -29,9 +29,11 @@ export class Player extends Ship {
                     this.rotatingRight = true;
                     break;
                 case 'q':
+                    // game.connection.invoke("DashLeft");
                     this.dashLeft();
                     break;
                 case 'e':
+                    // game.connection.invoke("DashRight");
                     this.dashRight();
                     break;
                 case 'space':
@@ -39,6 +41,8 @@ export class Player extends Ship {
                     break;
 
             }
+
+            // game.connection.invoke("UpdatePlayerCommands", this.acceleratingFrontwards, this.acceleratingBackwards, this.rotatingLeft, this.rotatingRight);
         });
 
         document.addEventListener('keyup', (e) => {
@@ -58,6 +62,8 @@ export class Player extends Ship {
                     this.isFiring = false;
                     break;
             }
+
+            // game.connection.invoke("UpdatePlayerCommands", this.acceleratingFrontwards, this.acceleratingBackwards, this.rotatingLeft, this.rotatingRight);
         });
     }
 

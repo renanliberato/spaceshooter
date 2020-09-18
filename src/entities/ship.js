@@ -24,6 +24,8 @@ export class Ship extends GameObject {
         this.bulletTargetTag = '';
         this.trailSpeed = 0.1;
         this.lastTrailTime = 0;
+        
+        this.updateToServerOn = 5;
 
         this.isFiring = false;
         this.rotatingLeft = false;
@@ -182,6 +184,14 @@ export class Ship extends GameObject {
         this.moveAccordingToAngle('left', this.object.angle, this.dx);
     }
 
+    updateHealth(health) {
+        this.health = health;
+
+        if (this.health <= 0) {
+            this.destroy();
+        }
+    }
+
     takeDamage(amount) {
         this.health -= amount;
 
@@ -195,6 +205,12 @@ export class Ship extends GameObject {
         this.createTrail();
         this.moveShip();
         this.fire();
+
+        if (this.id == this.game.player.id && this.game.isConnected) {
+            this.game.connection.invoke("UpdateShipPosition", this.id, this.x, this.y, this.object.angle, this.health);
+            this.updateToServerOn = 1;
+        } else {
+        }
     }
 
     onDestroy() {

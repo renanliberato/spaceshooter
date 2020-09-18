@@ -1,5 +1,5 @@
 import React from 'react';
-import { initGame, isMobile } from '../game';
+import { initGame } from '../game';
 import { PostGameScreen } from './PostGameScreen';
 
 export function GameScreen({ navigateBack, navigateTo }) {
@@ -38,7 +38,7 @@ export function GameScreen({ navigateBack, navigateTo }) {
         initGame(
             cancellationTokenRef.current,
             height,
-            isMobile ? document.body.clientWidth : height * 9 / 16
+            height * 9 / 16
         );
 
         return () => {

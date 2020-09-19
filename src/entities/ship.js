@@ -25,7 +25,7 @@ export class Ship extends GameObject {
         this.trailSpeed = 0.1;
         this.lastTrailTime = 0;
         
-        this.updateToServerOn = 5;
+        this.updateToServerOn = 10;
 
         this.isFiring = false;
         this.rotatingLeft = false;
@@ -98,6 +98,24 @@ export class Ship extends GameObject {
         }
         this.lastFireTime = this.game.time;
         const bullet = this.createBullet();
+
+        this.game.instantiateEntity(bullet);
+        
+        if (this.isVisible)
+            AudioManager.play(AudioManager.audios.shoot);
+
+        this.onFire();
+    }
+
+    onFire() {
+        
+    }
+
+    remoteFire(x, y, angle) {
+        const bullet = this.createBullet();
+        bullet.x = x;
+        bullet.y = y;
+        bullet.rotateToAngle(angle);
 
         this.game.instantiateEntity(bullet);
         
@@ -206,10 +224,9 @@ export class Ship extends GameObject {
         this.moveShip();
         this.fire();
 
-        if (this.id == this.game.player.id && this.game.isConnected) {
+        if (this.id == this.game.player.id && this.game.isConnected && --this.updateToServerOn <= 0) {
             this.game.connection.invoke("UpdateShipPosition", this.id, this.x, this.y, this.object.angle, this.health);
-            this.updateToServerOn = 1;
-        } else {
+            this.updateToServerOn = 10;
         }
     }
 

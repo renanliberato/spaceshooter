@@ -77,7 +77,8 @@ export const initGame = (cancellationToken, height) => {
     game.instantiateEntity(game.player);
 
     var simplerConnection = new HubConnectionBuilder()
-        .withUrl("https://renanliberato-spaceshooterserver.azurewebsites.net/simplermatchhub")
+        .withUrl("https://localhost:5001/simplermatchhub")
+        //.withUrl("https://renanliberato-spaceshooterserver.azurewebsites.net/simplermatchhub")
         .withAutomaticReconnect()
         .build();
 
@@ -89,39 +90,33 @@ export const initGame = (cancellationToken, height) => {
 
     simplerConnection.on("ShipPositionUpdated", function (id, x, y, angle, health) {
         var enemy = game.entities.find(e => e.id == id);
+
+        if (!enemy)
+            return;
+
         enemy.moveTo(x, y);
         enemy.rotateToAngle(angle);
         enemy.updateHealth(health);
     });
 
+    simplerConnection.on("ShotFired", function (id, x, y, angle) {
+        var enemy = game.entities.find(e => e.id == id);
+
+        if (!enemy)
+            return;
+
+        enemy.remoteFire(x, y, angle);
+    });
+
     simplerConnection.start().then(function () {
+        console.log('connected')
         game.isConnected = true;
         simplerConnection.invoke("AddShipToGame", game.player.id);
-        console.log('connected')
     }).catch(function (err) {
         return console.error(err.toString());
     });
 
     game.connection = simplerConnection;
-
-    // var connection = new HubConnectionBuilder()
-    //     .withUrl("https://localhost:5001/match")
-    //     .withAutomaticReconnect()
-    //     .build();
-
-    // connection.on("MatchStateUpdated", function (state) {
-    //     const stateAsObject = JSON.parse(state);
-    //     game.player.moveTo(stateAsObject.PlayerState.X, stateAsObject.PlayerState.Y);
-    //     game.player.rotateToAngle(stateAsObject.PlayerState.Angle);
-    // });
-
-    // connection.start().then(function () {
-    //     console.log('connected')
-    // }).catch(function (err) {
-    //     return console.error(err.toString());
-    // });
-
-    // game.connection = connection;
 
     // top wall
     var i = -45;
@@ -185,7 +180,7 @@ export const initGame = (cancellationToken, height) => {
 
         game.canvas.remove(game.ui.coordsText);
         game.ui.coordsText = new fabric.Text(
-            `x: ${game.visibleArea.x.toFixed(0)}, x2: ${game.visibleArea.x2.toFixed(0)}\ny: ${game.visibleArea.y.toFixed(0)}, y2: ${game.visibleArea.y2.toFixed(0)}\n\nplayerx: ${game.player.x.toFixed(0)}, playery: ${game.player.y.toFixed(0)}\n\nfps: ${((1000 / dt) / 1000).toFixed(0)}`,
+            `enemies id: ${game.entities.filter(e => e.isShip && e.id != game.player.id).map(e => e.id).join('\n')}\n\nfps: ${((1000 / dt) / 1000).toFixed(0)}`,
             {
                 selectable: false,
                 top: 100,

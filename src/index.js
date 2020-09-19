@@ -5,7 +5,7 @@ import { MainScreen } from './screens/MainScreen';
 import { GameScreen } from './screens/GameScreen';
 
 const App = () => {
-    const { currentScreen: { ScreenComponent, params }, navigateTo, navigateBack } = useNavigation(GameScreen);
+    const { currentScreen: { ScreenComponent, params }, navigateTo, navigateBack } = useNavigation(MainScreen);
 
     return (
         <>

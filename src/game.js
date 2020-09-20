@@ -100,17 +100,13 @@ export const initGame = (cancellationToken, height, matchId) => {
         }));
     });
 
-    simplerConnection.on("ShipPositionUpdated", function (id, x, y, dx, dy, angle, health) {
+    simplerConnection.on("ShipPositionUpdated", function (id, properties) {
         var enemy = game.entities.find(e => e.id == id);
 
         if (!enemy)
             return;
 
-        enemy.moveTo(x, y);
-        enemy.dx = dx;
-        enemy.dy = dy;
-        enemy.rotateToAngle(angle);
-        enemy.updateHealth(health);
+        Object.keys(properties).forEach(key => enemy[key] = properties[key]);
     });
 
     simplerConnection.on("ShotFired", function (id, x, y, angle) {

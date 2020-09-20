@@ -16,6 +16,7 @@ export class Ship extends GameObject {
         this.bulletSpeed = this.game.sizeFromHeight(2);
         this.dx = 0;
         this.dy = 0;
+        this.angle = 0;
         this.rotateSpeed = 4;
         this.accelerationForce = 0.01;
         this.dashForce = 2;
@@ -226,8 +227,21 @@ export class Ship extends GameObject {
         this.fire();
 
         if (this.id == this.game.player.id && this.game.isConnected && --this.updateToServerOn <= 0) {
-            this.game.connection.invoke("UpdateShipPosition", this.game.matchId, this.id, this.x, this.y, this.dx, this.dy, this.object.angle, this.health);
-            this.updateToServerOn = 1;
+            this.game.connection.invoke("UpdateShipPosition", this.game.matchId, this.id, {
+                x: this.x,
+                y: this.y,
+                dx: this.dx,
+                dy: this.dy,
+                angle: this.object.angle,
+                health: this.health,
+                rotatingLeft: this.rotatingLeft,
+                rotatingRight: this.rotatingRight,
+                dashingLeft: this.dashingLeft,
+                dashingRight: this.dashingRight,
+                acceleratingFrontwards: this.acceleratingFrontwards,
+                acceleratingBackwards: this.acceleratingBackwards,
+            });
+            this.updateToServerOn = 6;
         }
     }
 

@@ -6,6 +6,7 @@ export class GameObject {
         this.createdAt = game.time;
         this.tag = 'gameobject';
         this.game = game;
+        this.angle = 0;
         this.x = 0;
         this.y = 0;
         this.dx = 0;
@@ -29,11 +30,11 @@ export class GameObject {
     }
 
     rotateAngle(dAngle) {
-        this.object.rotate(this.object.angle + dAngle);
+        this.angle = this.object.angle + dAngle;
     }
 
     rotateToAngle(angle) {
-        this.object.rotate(angle);
+        this.angle = angle;
     }
 
     getAngleTowardsObject(obj) {
@@ -78,6 +79,7 @@ export class GameObject {
             this.destroy();
             return;
         }
+        this.object.rotate(this.angle);
         if (this.x >= this.game.visibleArea.x && this.x <= this.game.visibleArea.x2 && this.y >= this.game.visibleArea.y && this.y <= this.game.visibleArea.y2) {
             this.isVisible = true;
             if (!this.game.canvas.contains(this.object)) {

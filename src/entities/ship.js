@@ -108,7 +108,7 @@ export class Ship extends GameObject {
     }
 
     onFire() {
-        
+
     }
 
     remoteFire(x, y, angle) {
@@ -225,7 +225,7 @@ export class Ship extends GameObject {
         this.fire();
 
         if (this.id == this.game.player.id && this.game.isConnected && --this.updateToServerOn <= 0) {
-            this.game.connection.invoke("UpdateShipPosition", this.id, this.x, this.y, this.object.angle, this.health);
+            this.game.connection.invoke("UpdateShipPosition", this.game.matchId, this.id, this.x, this.y, this.object.angle, this.health);
             this.updateToServerOn = 10;
         }
     }

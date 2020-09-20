@@ -62,7 +62,7 @@ export class Player extends Ship {
     }
 
     onFire() {
-        this.game.connection.invoke("FireShot", this.id, this.x, this.y, this.object.angle);
+        this.game.connection.invoke("FireShot", this.game.matchId, this.id, this.x, this.y, this.object.angle);
     }
 
     onDestroy() {

@@ -2,7 +2,7 @@ import React from 'react';
 import { initGame } from '../game';
 import { PostGameScreen } from './PostGameScreen';
 
-export function GameScreen({ navigateBack, navigateTo }) {
+export function GameScreen({ navigateBack, navigateTo, matchId }) {
     const [uiState, setUiState] = React.useState({
         enemiesLeft: 0
     });
@@ -22,6 +22,13 @@ export function GameScreen({ navigateBack, navigateTo }) {
                 enemiesLeft: e.detail.enemies
             })
         }
+
+        const onPlayerEntered = (e) => {
+            setUiState(state => ({
+                enemiesLeft: state.enemiesLeft++
+            }))
+        }
+
         const onEnemyDestroyed = (e) => {
             setUiState({
                 enemiesLeft: e.detail.enemiesLeft
@@ -31,6 +38,7 @@ export function GameScreen({ navigateBack, navigateTo }) {
                 navigateTo(PostGameScreen, { result: 'enemy_destroyed' })
         }
         document.addEventListener('game_started', onGameStarted);
+        document.addEventListener('player_entered', onPlayerEntered);
         document.addEventListener('player_destroyed', onPlayerDestroyed);
         document.addEventListener('enemy_destroyed', onEnemyDestroyed);
 
@@ -38,11 +46,12 @@ export function GameScreen({ navigateBack, navigateTo }) {
         initGame(
             cancellationTokenRef.current,
             height,
-            height * 9 / 16
+            matchId
         );
 
         return () => {
             document.removeEventListener('game_started', onGameStarted);
+            document.removeEventListener('player_entered', onPlayerEntered);
             document.removeEventListener('player_destroyed', onPlayerDestroyed);
             document.removeEventListener('enemy_destroyed', onEnemyDestroyed);
             cancellationTokenRef.current.isCancelled = true;

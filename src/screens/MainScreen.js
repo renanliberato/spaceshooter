@@ -1,8 +1,11 @@
 import React from 'react';
 import { GameScreen } from './GameScreen';
 import { isMobile } from '../game';
+import { API_BASE_URL } from '../index';
 
 export function MainScreen({ navigateTo }) {
+    const [matchId, setMatchId] = React.useState(Math.random().toString(36).substring(7));
+
     return (
         <div style={{
             flex: 1,
@@ -11,7 +14,24 @@ export function MainScreen({ navigateTo }) {
         }}>
             <h1 style={{ textAlign: 'center' }}>Space shooter</h1>
             {!isMobile ? (<>
-                <button style={{ marginTop: 20, marginBottom: 20 }} onClick={() => navigateTo(GameScreen)}>Play</button>
+                <label style={{marginTop: 20}}>Match ID</label>
+                <input value={matchId} onChange={e => setMatchId(e.target.value)} />
+                <button style={{ marginBottom: 20 }} onClick={() => {
+                    console.log('creating match');
+
+                    fetch(`${API_BASE_URL}/matches/create`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(matchId)
+                    })
+                    .then(res => {
+                        navigateTo(GameScreen, {
+                            matchId: matchId
+                        });
+                    });
+                }}>Play</button>
                 <strong>Controls</strong>
                 <div>
                     <table>

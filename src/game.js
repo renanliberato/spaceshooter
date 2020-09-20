@@ -4,10 +4,11 @@ import { Enemy } from './entities/enemy';
 import { Wall } from './entities/wall';
 import { HubConnectionBuilder } from '@microsoft/signalr';
 import { EnemyPlayer } from './entities/enemyPlayer';
+import { API_BASE_URL } from './index';
 
 export const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-export const initGame = (cancellationToken, height) => {
+export const initGame = (cancellationToken, height, matchId) => {
     const width = height * 9 / 16;
     const canvasEl = document.getElementById('arena');
     canvasEl.setAttribute('height', height);
@@ -17,6 +18,7 @@ export const initGame = (cancellationToken, height) => {
     canvas.selection = false;
     canvas.backgroundColor = "#000";
     const game = {
+        matchId: matchId,
         canvas: canvas,
         visibleArea: {
             x: 0,
@@ -77,7 +79,7 @@ export const initGame = (cancellationToken, height) => {
     game.instantiateEntity(game.player);
 
     var simplerConnection = new HubConnectionBuilder()
-        .withUrl("https://localhost:5001/simplermatchhub")
+        .withUrl(`${API_BASE_URL}/simplermatchhub`)
         //.withUrl("https://renanliberato-spaceshooterserver.azurewebsites.net/simplermatchhub")
         .withAutomaticReconnect()
         .build();
@@ -86,6 +88,7 @@ export const initGame = (cancellationToken, height) => {
         var enemy = new EnemyPlayer(game);
         enemy.id = id;
         game.instantiateEntity(enemy);
+        document.dispatchEvent(new CustomEvent('player_entered'))
     });
 
     simplerConnection.on("ShipPositionUpdated", function (id, x, y, angle, health) {
@@ -111,7 +114,7 @@ export const initGame = (cancellationToken, height) => {
     simplerConnection.start().then(function () {
         console.log('connected')
         game.isConnected = true;
-        simplerConnection.invoke("AddShipToGame", game.player.id);
+        simplerConnection.invoke("AddShipToGame", game.matchId, game.player.id);
     }).catch(function (err) {
         return console.error(err.toString());
     });

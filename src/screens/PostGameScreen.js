@@ -14,11 +14,6 @@ export function PostGameScreen({ result, navigateBack, navigateTo }) {
                 flexDirection: 'row',
 
             }}>
-                <button style={{marginRight: 5}} onClick={() => {
-                    navigateBack();
-                    navigateBack();
-                    navigateTo(GameScreen);
-                }}>Play again</button>
                 <button style={{marginLeft: 5}} onClick={() => {
                     navigateBack();
                     navigateBack();

@@ -48,6 +48,7 @@ export class Ship extends GameObject {
     }
 
     createTrail() {
+        return;
         if (this.game.time - this.lastTrailTime <= this.trailSpeed) {
             return;
         }
@@ -225,8 +226,8 @@ export class Ship extends GameObject {
         this.fire();
 
         if (this.id == this.game.player.id && this.game.isConnected && --this.updateToServerOn <= 0) {
-            this.game.connection.invoke("UpdateShipPosition", this.game.matchId, this.id, this.x, this.y, this.object.angle, this.health);
-            this.updateToServerOn = 10;
+            this.game.connection.invoke("UpdateShipPosition", this.game.matchId, this.id, this.x, this.y, this.dx, this.dy, this.object.angle, this.health);
+            this.updateToServerOn = 1;
         }
     }
 

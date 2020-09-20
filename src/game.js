@@ -91,13 +91,24 @@ export const initGame = (cancellationToken, height, matchId) => {
         document.dispatchEvent(new CustomEvent('player_entered'))
     });
 
-    simplerConnection.on("ShipPositionUpdated", function (id, x, y, angle, health) {
+    simplerConnection.on("PlayerDestroyed", function (id, remainingPlayers) {
+        console.log(id, remainingPlayers);
+        document.dispatchEvent(new CustomEvent('enemy_destroyed', {
+            detail: {
+                enemiesLeft: remainingPlayers - 1
+            }
+        }));
+    });
+
+    simplerConnection.on("ShipPositionUpdated", function (id, x, y, dx, dy, angle, health) {
         var enemy = game.entities.find(e => e.id == id);
 
         if (!enemy)
             return;
 
         enemy.moveTo(x, y);
+        enemy.dx = dx;
+        enemy.dy = dy;
         enemy.rotateToAngle(angle);
         enemy.updateHealth(health);
     });

@@ -1,12 +1,11 @@
 import { Ship } from './ship';
+import { FireBehaviour } from './components/fireBehaviour';
 
 export class EnemyPlayer extends Ship {
     constructor(game) {
         super(game, 'red');
 
         this.tag = 'enemy';
-        this.maxHealth = 1;
-        this.health = 1;
-        this.bulletTargetTag = 'player';
+        this.addComponent(new FireBehaviour(this, 0.5, this.game.sizeFromHeight(2), this.id+'bullet', 'player'));
     }
 }

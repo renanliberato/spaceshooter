@@ -5,6 +5,8 @@ import { Wall } from './entities/wall';
 import { HubConnectionBuilder } from '@microsoft/signalr';
 import { EnemyPlayer } from './entities/enemyPlayer';
 import { API_BASE_URL } from './index';
+import { HealthBehaviour } from './entities/components/healthBehaviour';
+import { FireBehaviour } from './entities/components/fireBehaviour';
 
 export const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
@@ -56,6 +58,8 @@ export const initGame = (cancellationToken, height, matchId) => {
         }
     };
 
+    window.game = game;
+
     game.ui.playerHealthBar = new fabric.Rect({
         selectable: false,
         top: game.height - game.sizeFromHeight(2) - game.paddingV,
@@ -92,7 +96,6 @@ export const initGame = (cancellationToken, height, matchId) => {
     });
 
     simplerConnection.on("PlayerDestroyed", function (id, remainingPlayers) {
-        console.log(id, remainingPlayers);
         document.dispatchEvent(new CustomEvent('enemy_destroyed', {
             detail: {
                 enemiesLeft: remainingPlayers - 1
@@ -106,16 +109,19 @@ export const initGame = (cancellationToken, height, matchId) => {
         if (!enemy)
             return;
 
-        Object.keys(properties).forEach(key => enemy[key] = properties[key]);
+        const { health, ...filteredProps } = properties;
+
+        enemy.getHealth().health = health;
+
+        Object.keys(filteredProps).forEach(key => enemy[key] = filteredProps[key]);
     });
 
     simplerConnection.on("ShotFired", function (id, x, y, angle) {
         var enemy = game.entities.find(e => e.id == id);
-
         if (!enemy)
             return;
 
-        enemy.remoteFire(x, y, angle);
+        enemy.getComponent(FireBehaviour).remoteFire(x, y, angle);
     });
 
     simplerConnection.start().then(function () {
@@ -221,7 +227,7 @@ export const initGame = (cancellationToken, height, matchId) => {
             game.canvas.add(mark);
         });
 
-        game.ui.playerHealthBar.set('width', game.sizeFromWidth((game.player.health / game.player.maxHealth) * 100) - game.paddingH * 2);
+        game.ui.playerHealthBar.set('width', game.sizeFromWidth((game.player.getHealth().health / game.player.getHealth().maxHealth) * 100) - game.paddingH * 2);
         game.ui.playerHealthBar.setCoords();
 
         game.canvas.renderAll();

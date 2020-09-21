@@ -1,7 +1,7 @@
 import { GameObject } from './gameobject';
-import { Bullet } from './bullet';
 import { AudioManager } from '../audios/AudioManager';
 import { Trail } from './trail';
+import { HealthBehaviour } from './components/healthBehaviour';
 
 export class Ship extends GameObject {
     constructor(game, color) {
@@ -9,11 +9,7 @@ export class Ship extends GameObject {
 
         this.particles = []
         this.isShip = true;
-        this.firingSpeed = 1;
-        this.lastFireTime = 0;
         this.tag = 'ship';
-        this.bulletTag = this.id+'bullet';
-        this.bulletSpeed = this.game.sizeFromHeight(2);
         this.dx = 0;
         this.dy = 0;
         this.angle = 0;
@@ -22,13 +18,11 @@ export class Ship extends GameObject {
         this.dashForce = 2;
         this.dashDecreaseForce = 0.07;
         this.dashDecreaseTreshold = 0.3;
-        this.bulletTargetTag = '';
         this.trailSpeed = 0.1;
         this.lastTrailTime = 0;
         
         this.updateToServerOn = 10;
 
-        this.isFiring = false;
         this.rotatingLeft = false;
         this.rotatingRight = false;
         this.dashingLeft = false;
@@ -46,6 +40,12 @@ export class Ship extends GameObject {
             originY: 'center',
             fill: color,
         }));
+
+        this.addComponent(new HealthBehaviour(this, 10));
+    }
+
+    getHealth() {
+        return this.getComponent(HealthBehaviour);
     }
 
     createTrail() {
@@ -85,72 +85,8 @@ export class Ship extends GameObject {
             this.dy += this.game.sizeFromHeight(this.accelerationForce);
     }
 
-    moveBullet(angle) {
-        return (obj) => {
-            obj.moveAccordingToAngle('front', angle, this.bulletSpeed);
-        };
-    }
-
-    fire() {
-        if (!this.isFiring)
-            return;
-
-        if (this.game.time - this.lastFireTime <= this.firingSpeed) {
-            return;
-        }
-        this.lastFireTime = this.game.time;
-        const bullet = this.createBullet();
-
-        this.game.instantiateEntity(bullet);
-        
-        if (this.isVisible)
-            AudioManager.play(AudioManager.audios.shoot);
-
-        this.onFire();
-    }
-
     onFire() {
 
-    }
-
-    remoteFire(x, y, angle) {
-        const bullet = this.createBullet();
-        bullet.x = x;
-        bullet.y = y;
-        bullet.rotateToAngle(angle);
-
-        this.game.instantiateEntity(bullet);
-        
-        if (this.isVisible)
-            AudioManager.play(AudioManager.audios.shoot);
-    }
-
-    createBullet() {
-        var bullet = new Bullet(
-            this.game,
-            new fabric.Rect({
-                selectable: false,
-                fill: this.object.fill,
-                left: this.object.getCenterPoint().x,
-                top: this.object.getCenterPoint().y,
-                width: this.game.sizeFromWidth(1),
-                height: this.game.sizeFromHeight(3),
-                originX: 'center',
-                originY: 'center',
-            }),
-            this.moveBullet(this.object.angle),
-            this.bulletTag,
-            this,
-            this.bulletTargetTag
-        );
-        bullet.destroyAfter(0.5);
-
-        bullet.x = this.x;
-        bullet.y = this.y;
-
-        bullet.rotateToAngle(this.object.angle);
-
-        return bullet;
     }
 
     dashLeft() {
@@ -204,27 +140,10 @@ export class Ship extends GameObject {
         this.moveAccordingToAngle('left', this.object.angle, this.dx);
     }
 
-    updateHealth(health) {
-        this.health = health;
-
-        if (this.health <= 0) {
-            this.destroy();
-        }
-    }
-
-    takeDamage(amount) {
-        this.health -= amount;
-
-        if (this.health <= 0) {
-            this.destroy();
-        }
-    }
-
     update() {
         super.update();
         this.createTrail();
         this.moveShip();
-        this.fire();
 
         if (this.id == this.game.player.id && this.game.isConnected && --this.updateToServerOn <= 0) {
             this.game.connection.invoke("UpdateShipPosition", this.game.matchId, this.id, {
@@ -233,7 +152,7 @@ export class Ship extends GameObject {
                 dx: this.dx,
                 dy: this.dy,
                 angle: this.object.angle,
-                health: this.health,
+                health: this.getHealth().health,
                 rotatingLeft: this.rotatingLeft,
                 rotatingRight: this.rotatingRight,
                 dashingLeft: this.dashingLeft,
@@ -241,7 +160,7 @@ export class Ship extends GameObject {
                 acceleratingFrontwards: this.acceleratingFrontwards,
                 acceleratingBackwards: this.acceleratingBackwards,
             });
-            this.updateToServerOn = 6;
+            this.updateToServerOn = 1;
         }
     }
 

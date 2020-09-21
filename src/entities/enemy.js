@@ -1,13 +1,12 @@
 import { Ship } from './ship';
+import { FireBehaviour } from './components/fireBehaviour';
 
 export class Enemy extends Ship {
     constructor(game) {
         super(game, 'red');
 
         this.tag = 'enemy';
-        this.maxHealth = 1;
-        this.health = 1;
-        this.bulletTargetTag = 'player';
+        this.addComponent(new FireBehaviour(this, 0.5, this.game.sizeFromHeight(2), this.id+'bullet', 'player'));
     }
 
     update() {
@@ -24,7 +23,7 @@ export class Enemy extends Ship {
 
         const isFarFromPlayer = distanceFromPlayer > 120;
 
-        this.isFiring = false;
+        this.getComponent(FireBehaviour).isFiring = false;
         this.acceleratingFrontwards = false;
         this.acceleratingBackwards = false;
         
@@ -36,7 +35,7 @@ export class Enemy extends Ship {
                 this.acceleratingFrontwards = true;
                 this.acceleratingBackwards = false;
             } else {
-                this.isFiring = true;
+                this.getComponent(FireBehaviour).isFiring = true;
             }
         }
     }

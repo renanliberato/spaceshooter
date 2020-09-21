@@ -1,16 +1,32 @@
 import { GameObject } from './gameobject';
 import { AudioManager } from '../audios/AudioManager';
+import { HealthBehaviour } from './components/HealthBehaviour';
 
 export class Bullet extends GameObject {
-    constructor(game, object, moveFunc, tag, owner, targetTag) {
+    constructor(game, tag, owner, targetTag, speed) {
         super(game);
 
         this.owner = owner;
+        this.angle = this.owner.angle;
         this.tag = tag;
-        this.moveFunc = moveFunc;
         this.targetTag = targetTag;
 
-        this.setObject(object);
+        this.x = this.owner.x;
+        this.y = this.owner.y;
+        this.dy = speed;
+
+        this.setObject(new fabric.Rect({
+            selectable: false,
+            fill: this.owner.object.fill,
+            width: this.owner.game.sizeFromWidth(1),
+            height: this.owner.game.sizeFromHeight(3),
+            top: this.owner.object.top,
+            left: this.owner.object.left,
+            originX: 'center',
+            originY: 'center',
+        }));
+
+        this.rotateToAngle(this.owner.angle);
 
         setTimeout(() => {
             if (!this.destroyed) {
@@ -21,8 +37,7 @@ export class Bullet extends GameObject {
 
     update() {
         super.update();
-
-        (this.moveFunc)(this);
+        this.moveAccordingToAngle('front', this.angle, this.dy)
         if (this.y <= 0 || this.y >= this.game.map.height || this.x <= 0 || this.x >= this.game.map.width)
             this.destroy('bullet out of bounds');
 
@@ -31,8 +46,8 @@ export class Bullet extends GameObject {
             if (this.object.intersectsWithObject(ship.object)) {
                 if (this.isVisible)
                     AudioManager.play(AudioManager.audios.hit);
-                    
-                ship.takeDamage(1);
+                
+                ship.getHealth().takeDamage(1);
                 hitAnyone = true;
             }
         });

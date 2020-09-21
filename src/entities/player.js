@@ -1,4 +1,5 @@
 import { Ship } from './ship';
+import { FireBehaviour } from './components/fireBehaviour';
 
 const keycode = require('keycode');
 
@@ -7,12 +8,9 @@ export class Player extends Ship {
         super(game, '#fff');
 
         this.tag = 'player';
-        this.maxHealth = 10;
-        this.health = 10;
         this.x = game.map.width / 2;
         this.y = game.map.height / 2;
-        this.bulletTargetTag = 'enemy';
-        this.firingSpeed = 0.5;
+        this.addComponent(new FireBehaviour(this, 0.5, this.game.sizeFromHeight(2), this.id+'bullet', 'enemy'));
 
         document.addEventListener('keydown', (e) => {
             switch (keycode(e)) {
@@ -35,7 +33,7 @@ export class Player extends Ship {
                     this.dashRight();
                     break;
                 case 'space':
-                    this.isFiring = true;
+                    this.getComponent(FireBehaviour).isFiring = true;
                     break;
 
             }
@@ -55,7 +53,7 @@ export class Player extends Ship {
                     this.rotatingRight = false;
                     break;
                 case 'space':
-                    this.isFiring = false;
+                    this.getComponent(FireBehaviour).isFiring = false;
                     break;
             }
         });

@@ -14,6 +14,19 @@ export class GameObject {
         this.destroyed = false;
         this.isVisible = false;
         this.destroyAt = undefined;
+        this.components = [];
+    }
+
+    addComponent(c) {
+        this.components.push(c);
+    }
+
+    getComponent(theClass) {
+        return this.components.find(c => c.constructor.name == theClass.name);
+    }
+
+    start() {
+        this.components.forEach(c => c.start());
     }
 
     setObject(obj) {
@@ -31,10 +44,12 @@ export class GameObject {
 
     rotateAngle(dAngle) {
         this.angle = this.object.angle + dAngle;
+        this.object.rotate(this.angle);
     }
 
     rotateToAngle(angle) {
         this.angle = angle;
+        this.object.rotate(this.angle);
     }
 
     getAngleTowardsObject(obj) {
@@ -79,15 +94,19 @@ export class GameObject {
             this.destroy();
             return;
         }
+
+        this.components.forEach(c => c.update());
         this.object.rotate(this.angle);
+
         if (this.x >= this.game.visibleArea.x && this.x <= this.game.visibleArea.x2 && this.y >= this.game.visibleArea.y && this.y <= this.game.visibleArea.y2) {
             this.isVisible = true;
             if (!this.game.canvas.contains(this.object)) {
                 this.game.canvas.add(this.object);
             }
 
-            this.object.left = this.x - this.game.visibleArea.x - Math.sin(this.object.angle * Math.PI / 180) * this.dy * 5;
-            this.object.top = this.y - this.game.visibleArea.y + Math.cos(this.object.angle * Math.PI / 180) * this.dy * 5;
+            this.object.left = this.x - this.game.visibleArea.x;
+            this.object.top = this.y - this.game.visibleArea.y;
+
             this.object.setCoords();
         } else {
             this.isVisible = false;

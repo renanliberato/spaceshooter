@@ -15,6 +15,7 @@ export function PostGameScreen({ result, navigateBack, navigateTo }) {
 
             }}>
                 <button style={{marginLeft: 5}} onClick={() => {
+                    window.history.replaceState("", "", '/');
                     navigateBack();
                     navigateBack();
                 }}>Return to main menu</button>

@@ -1,5 +1,6 @@
 import { Ship } from './ship';
 import { FireBehaviour } from './components/fireBehaviour';
+import { HealthBehaviour } from './components/healthBehaviour';
 
 export class Enemy extends Ship {
     constructor(game) {
@@ -7,6 +8,8 @@ export class Enemy extends Ship {
 
         this.tag = 'enemy';
         this.addComponent(new FireBehaviour(this, 0.5, this.game.sizeFromHeight(2), this.id+'bullet', 'player'));
+        this.getComponent(HealthBehaviour).health = 1;
+        this.getComponent(HealthBehaviour).maxHealth = 1;
     }
 
     update() {

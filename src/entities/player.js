@@ -70,8 +70,9 @@ export class Player extends Ship {
     }
 
     onDestroy() {
+        this.emitter.emit("DestroyPlayer", this.id);
+        
         super.onDestroy();
-        this.game.connection.invoke("DestroyPlayer", this.game.matchId, this.id);
         document.dispatchEvent(new CustomEvent('player_destroyed'));
     }
 }

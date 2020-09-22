@@ -1,9 +1,8 @@
 import React from 'react';
-import { initGame } from '../game';
+import { initSinglePlayerGame } from '../singleplayergame';
 import { PostGameScreen } from './PostGameScreen';
 
-export function GameScreen({ navigateBack, navigateTo, matchId }) {
-    window.history.replaceState("", "", '?matchid='+matchId);
+export function SinglePlayerGameScreen({ navigateBack, navigateTo }) {
     const [uiState, setUiState] = React.useState({
         enemiesLeft: 0
     });
@@ -11,11 +10,13 @@ export function GameScreen({ navigateBack, navigateTo, matchId }) {
     const cancellationTokenRef = React.useRef({
         isCancelled: false
     });
+
     const gameDisposer = React.useRef({dispose: () => {}});
     const gameContainerRef = React.useRef(null);
 
     React.useEffect(() => {
         const onPlayerDestroyed = (e) => {
+            console.log('player_destroyed')
             navigateTo(PostGameScreen, { result: 'player_destroyed' });
         }
 
@@ -23,12 +24,6 @@ export function GameScreen({ navigateBack, navigateTo, matchId }) {
             setUiState({
                 enemiesLeft: e.detail.enemies
             })
-        }
-
-        const onPlayerEntered = (e) => {
-            setUiState(state => ({
-                enemiesLeft: state.enemiesLeft++
-            }))
         }
 
         const onEnemyDestroyed = (e) => {
@@ -40,20 +35,17 @@ export function GameScreen({ navigateBack, navigateTo, matchId }) {
                 navigateTo(PostGameScreen, { result: 'enemy_destroyed' })
         }
         document.addEventListener('game_started', onGameStarted);
-        document.addEventListener('player_entered', onPlayerEntered);
         document.addEventListener('player_destroyed', onPlayerDestroyed);
         document.addEventListener('enemy_destroyed', onEnemyDestroyed);
 
         const height = Math.min(gameContainerRef.current.offsetHeight, window.innerHeight);
-        gameDisposer.current.dispose = initGame(
+        gameDisposer.current.dispose = initSinglePlayerGame(
             cancellationTokenRef.current,
-            height,
-            matchId
+            height
         );
 
         return () => {
             document.removeEventListener('game_started', onGameStarted);
-            document.removeEventListener('player_entered', onPlayerEntered);
             document.removeEventListener('player_destroyed', onPlayerDestroyed);
             document.removeEventListener('enemy_destroyed', onEnemyDestroyed);
             cancellationTokenRef.current.isCancelled = true;

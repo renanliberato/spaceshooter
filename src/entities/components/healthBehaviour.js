@@ -8,10 +8,6 @@ export class HealthBehaviour extends Component
         this.maxHealth = maxHealth;
     }
 
-    start() {
-
-    }
-
     update() {
         if (this.health <= 0) {
             this.gameobject.destroy();

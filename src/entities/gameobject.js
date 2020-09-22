@@ -123,6 +123,6 @@ export class GameObject {
     }
     
     onDestroy() {
-
+        this.components.forEach(c => c.onDestroy && c.onDestroy())
     }
 }

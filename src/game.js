@@ -2,6 +2,8 @@ const fabric = require('fabric').fabric;
 import { Player } from './entities/player';
 import { Enemy } from './entities/enemy';
 import { Wall } from './entities/wall';
+import { ShipPositionSynchronizer } from './entities/components/shipPositionSynchronizer';
+import { ShipFireSynchronizer } from './entities/components/shipFireSynchronizer';
 import { HubConnectionBuilder } from '@microsoft/signalr';
 import { EnemyPlayer } from './entities/enemyPlayer';
 import { API_BASE_URL } from './index';
@@ -80,6 +82,8 @@ export const initGame = (cancellationToken, height, matchId) => {
 
     game.canvas.add(game.ui.playerHealthBar);
     game.player = new Player(game);
+    game.player.addComponent(new ShipPositionSynchronizer(game.player));
+    game.player.addComponent(new ShipFireSynchronizer(game.player));
     game.instantiateEntity(game.player);
 
     var simplerConnection = new HubConnectionBuilder()

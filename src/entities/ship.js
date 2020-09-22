@@ -2,6 +2,7 @@ import { GameObject } from './gameobject';
 import { AudioManager } from '../audios/AudioManager';
 import { Trail } from './trail';
 import { HealthBehaviour } from './components/healthBehaviour';
+import { createNanoEvents } from 'nanoevents';
 
 export class Ship extends GameObject {
     constructor(game, color) {
@@ -29,6 +30,8 @@ export class Ship extends GameObject {
         this.dashingRight = false;
         this.acceleratingFrontwards = false;
         this.acceleratingBackwards = false;
+
+        this.emitter = createNanoEvents();
 
         this.setObject(new fabric.Triangle({
             selectable: false,
@@ -146,7 +149,7 @@ export class Ship extends GameObject {
         this.moveShip();
 
         if (this.id == this.game.player.id && this.game.isConnected && --this.updateToServerOn <= 0) {
-            this.game.connection.invoke("SendEventToOtherPlayers", this.game.matchId, {
+            this.emitter.emit("ShipPositionUpdated", {
                 name: "ShipPositionUpdated",
                 shipId: this.id,
                 x: this.x,

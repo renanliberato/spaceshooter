@@ -15,10 +15,6 @@ export class FireBehaviour extends Component
         this.bulletTargetTag = bulletTargetTag;
     }
 
-    start() {
-
-    }
-
     update() {
         if (!this.isFiring)
             return;

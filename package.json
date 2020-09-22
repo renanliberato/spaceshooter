@@ -13,6 +13,7 @@
     "@microsoft/signalr": "^3.1.8",
     "fabric": "^4.1.0",
     "keycode": "^2.2.0",
+    "nanoevents": "^5.1.8",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-simple-stack-navigation": "^1.1.0",

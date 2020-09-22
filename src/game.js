@@ -103,18 +103,21 @@ export const initGame = (cancellationToken, height, matchId) => {
         }));
     });
 
-    simplerConnection.on("ShipPositionUpdated", function (id, properties) {
-        var enemy = game.entities.find(e => e.id == id);
+    simplerConnection.on("EventBroadcasted", function(ev) {
+        switch (ev.name) {
+            case "ShipPositionUpdated":
+                const { name, shipId, health, ...filteredProps } = ev;
 
-        if (!enemy)
-            return;
+                var enemy = game.entities.find(e => e.id == shipId);
 
-        const { health, ...filteredProps } = properties;
+                if (!enemy)
+                    return;
 
-        enemy.getHealth().health = health;
+                enemy.getHealth().health = health;
 
-        Object.keys(filteredProps).forEach(key => enemy[key] = filteredProps[key]);
-    });
+                Object.keys(filteredProps).forEach(key => enemy[key] = filteredProps[key]);
+        }
+    })
 
     simplerConnection.on("ShotFired", function (id, x, y, angle) {
         var enemy = game.entities.find(e => e.id == id);
@@ -130,6 +133,14 @@ export const initGame = (cancellationToken, height, matchId) => {
         simplerConnection.invoke("AddShipToGame", game.matchId, game.player.id);
     }).catch(function (err) {
         return console.error(err.toString());
+    });
+
+    simplerConnection.onclose(err => {
+        game.isConnected = false;
+    });
+
+    simplerConnection.onreconnected(connectionId => {
+        game.isConnected = true;
     });
 
     game.connection = simplerConnection;
@@ -235,4 +246,9 @@ export const initGame = (cancellationToken, height, matchId) => {
     };
 
     window.requestAnimationFrame(render);
+
+    return () => {
+        game.isConnected = false;
+        game.connection.stop();
+    };
 }

@@ -3,6 +3,7 @@ import { initGame } from '../game';
 import { PostGameScreen } from './PostGameScreen';
 
 export function GameScreen({ navigateBack, navigateTo, matchId }) {
+    window.history.replaceState("", "", '?matchid='+matchId);
     const [uiState, setUiState] = React.useState({
         enemiesLeft: 0
     });
@@ -10,6 +11,7 @@ export function GameScreen({ navigateBack, navigateTo, matchId }) {
     const cancellationTokenRef = React.useRef({
         isCancelled: false
     });
+    const gameDisposer = React.useRef({dispose: () => {}});
     const gameContainerRef = React.useRef(null);
 
     React.useEffect(() => {
@@ -43,11 +45,12 @@ export function GameScreen({ navigateBack, navigateTo, matchId }) {
         document.addEventListener('enemy_destroyed', onEnemyDestroyed);
 
         const height = Math.min(gameContainerRef.current.offsetHeight, window.innerHeight);
-        initGame(
+        gameDisposer.current.dispose = initGame(
             cancellationTokenRef.current,
             height,
             matchId
         );
+        console.log(gameDisposer.current.dispose);
 
         return () => {
             document.removeEventListener('game_started', onGameStarted);
@@ -55,6 +58,7 @@ export function GameScreen({ navigateBack, navigateTo, matchId }) {
             document.removeEventListener('player_destroyed', onPlayerDestroyed);
             document.removeEventListener('enemy_destroyed', onEnemyDestroyed);
             cancellationTokenRef.current.isCancelled = true;
+            gameDisposer.current.dispose();
         };
     }, []);
 

@@ -146,7 +146,9 @@ export class Ship extends GameObject {
         this.moveShip();
 
         if (this.id == this.game.player.id && this.game.isConnected && --this.updateToServerOn <= 0) {
-            this.game.connection.invoke("UpdateShipPosition", this.game.matchId, this.id, {
+            this.game.connection.invoke("SendEventToOtherPlayers", this.game.matchId, {
+                name: "ShipPositionUpdated",
+                shipId: this.id,
                 x: this.x,
                 y: this.y,
                 dx: this.dx,

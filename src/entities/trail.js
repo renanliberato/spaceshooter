@@ -10,7 +10,7 @@ export class Trail extends GameObject
         this.dy = this.owner.dy;
         this.dx = this.owner.dx;
         this.distantiationSpeed = 0;
-        this.object = new fabric.Rect({
+        this.setObject(new fabric.Rect({
             selectable: false,
             left: 0,
             top: 0,
@@ -19,7 +19,7 @@ export class Trail extends GameObject
             height: this.game.sizeFromWidth(1 * this.owner.dy / 2),
             originX: 'center',
             originY: 'center',
-        });
+        }));
         this.rotateToAngle(this.owner.object.angle);
 
         this.moveAccordingToAngle('front', this.owner.object.angle, this.owner.object.height * -1);

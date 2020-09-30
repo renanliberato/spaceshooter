@@ -76,6 +76,14 @@ export function MainScreen({ navigateTo }) {
                                 <td>Space</td>
                                 <td>Shoot</td>
                             </tr>
+                            <tr>
+                                <td>Q</td>
+                                <td>Dash left</td>
+                            </tr>
+                            <tr>
+                                <td>E</td>
+                                <td>Dash right</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

@@ -11,10 +11,13 @@ export class GameObject {
         this.y = 0;
         this.dx = 0;
         this.dy = 0;
+        this.width = 0;
+        this.height = 0;
         this.destroyed = false;
         this.isVisible = false;
         this.destroyAt = undefined;
         this.components = [];
+        this.object = {rotate: () => {}};
     }
 
     addComponent(c) {
@@ -43,7 +46,7 @@ export class GameObject {
     }
 
     rotateAngle(dAngle) {
-        this.angle = this.object.angle + dAngle;
+        this.angle = this.angle + dAngle;
         this.object.rotate(this.angle);
     }
 
@@ -85,6 +88,35 @@ export class GameObject {
         }
     }
 
+    getCoordsTowardsDirection(x, y, direction, angle, speed) {
+        switch (direction) {
+            case 'front':
+                return {
+                    x: x + speed * Math.sin(angle * Math.PI / 180),
+                    y: y + speed * Math.cos(angle * Math.PI / 180) * -1
+                };
+                break;
+            case 'back':
+                return {
+                    x: x + speed * Math.cos(angle * Math.PI / 180),
+                    y: y + speed * Math.sin(angle * Math.PI / 180)
+                };
+                break;
+            case 'left':
+                return {
+                    x: x + speed * Math.cos(angle * Math.PI / 180),
+                    y: y + speed * Math.sin(angle * Math.PI / 180)
+                };
+                break;
+            case 'right':
+                return {
+                    x: x + speed * Math.cos(angle * Math.PI / 180) * -1,
+                    y: y + speed * Math.sin(angle * Math.PI / 180) * -1
+                };
+                break;
+        }
+    }
+
     destroyAfter(time) {
         this.destroyAt = this.game.time + time;
     }
@@ -97,22 +129,13 @@ export class GameObject {
 
         this.components.forEach(c => c.update());
         this.object.rotate(this.angle);
+        this.isVisible = this.x >= this.game.visibleArea.x && this.x <= this.game.visibleArea.x2 && this.y >= this.game.visibleArea.y && this.y <= this.game.visibleArea.y2;
 
-        if (this.x >= this.game.visibleArea.x && this.x <= this.game.visibleArea.x2 && this.y >= this.game.visibleArea.y && this.y <= this.game.visibleArea.y2) {
-            this.isVisible = true;
-            if (!this.game.canvas.contains(this.object)) {
-                this.game.canvas.add(this.object);
-            }
+        this.object.left = this.x - this.game.visibleArea.x;
+        this.object.top = this.y - this.game.visibleArea.y;
+    }
 
-            this.object.left = this.x - this.game.visibleArea.x;
-            this.object.top = this.y - this.game.visibleArea.y;
-
-            this.object.setCoords();
-        } else {
-            this.isVisible = false;
-            if (this.game.canvas.contains(this.object))
-                this.game.canvas.remove(this.object);
-        }
+    render() {
     }
 
     destroy(reason) {
@@ -124,5 +147,43 @@ export class GameObject {
     
     onDestroy() {
         this.components.forEach(c => c.onDestroy && c.onDestroy())
+    }
+
+    drawPolygon(centerX, centerY, sideCount, size, strokeWidth, strokeColor, fillColor, rotationDegrees) {
+        switch (sideCount) {
+            case 3:
+                rotationDegrees += 90 / 3
+                break;
+            case 2:
+                rotationDegrees += 90;
+                break;
+            case 4:
+                rotationDegrees += 45;
+                break;
+        }
+
+        var radians=rotationDegrees*Math.PI/180;
+        this.game.context.translate(centerX, centerY);
+        this.game.context.rotate(radians);
+        this.game.context.beginPath();
+        this.game.context.moveTo (size * Math.cos(0), size * Math.sin(0));          
+        for (var i = 1; i <= sideCount;i += 1) {
+            this.game.context.lineTo (size * Math.cos(i * 2 * Math.PI / sideCount), size * Math.sin(i * 2 * Math.PI / sideCount));
+        }
+        this.game.context.closePath();
+        this.game.context.fillStyle=fillColor;
+        this.game.context.strokeStyle = strokeColor;
+        this.game.context.lineWidth = strokeWidth;
+        this.game.context.stroke();
+        this.game.context.fill();
+        this.game.context.rotate(-radians);
+        this.game.context.translate(-centerX,-centerY);
+    }
+
+    getCenterCanvasCoords() {
+        return {
+            x: this.x - this.game.visibleArea.x,
+            y: this.y - this.game.visibleArea.y,
+        };
     }
 }

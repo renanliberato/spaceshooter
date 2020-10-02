@@ -14,17 +14,8 @@ export class Bullet extends GameObject {
         this.x = this.owner.x;
         this.y = this.owner.y;
         this.dy = speed;
-
-        this.setObject(new fabric.Rect({
-            selectable: false,
-            fill: this.owner.object.fill,
-            width: this.owner.game.sizeFromWidth(1),
-            height: this.owner.game.sizeFromHeight(3),
-            top: this.owner.object.top,
-            left: this.owner.object.left,
-            originX: 'center',
-            originY: 'center',
-        }));
+        this.width = 3;
+        this.height = 10;
 
         this.rotateToAngle(this.owner.angle);
 
@@ -55,5 +46,18 @@ export class Bullet extends GameObject {
         if (hitAnyone) {
             this.destroy('bullet hit anyone');
         }
+    }
+
+    render() {
+        const centerCoords = this.getCenterCanvasCoords();
+        this.drawPolygon(
+            centerCoords.x,
+            centerCoords.y,
+            2,
+            this.height,
+            this.width,
+            this.owner.color,
+            this.owner.color,
+            this.angle)
     }
 }

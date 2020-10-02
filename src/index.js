@@ -3,12 +3,13 @@ import React from 'react';
 import { useNavigation } from 'react-simple-stack-navigation';
 import { MainScreen } from './screens/MainScreen';
 import { GameScreen } from './screens/GameScreen';
+import { SinglePlayerGameScreen } from './screens/SinglePlayerGameScreen';
 
 export const API_BASE_URL = 'https://localhost:5001';
 //export const API_BASE_URL = 'https://renanliberato-spaceshooterserver.azurewebsites.net';
 
 const App = () => {
-    const { currentScreen: { ScreenComponent, params }, navigateTo, navigateBack } = useNavigation(MainScreen);
+    const { currentScreen: { ScreenComponent, params }, navigateTo, navigateBack } = useNavigation(SinglePlayerGameScreen);
 
     return (
         <>

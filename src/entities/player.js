@@ -8,8 +8,8 @@ export class Player extends Ship {
         super(game, '#fff');
 
         this.tag = 'player';
-        this.x = game.map.width / 2;
-        this.y = game.map.height / 2;
+        this.x = 100;
+        this.y = 100;
         this.addComponent(new FireBehaviour(this, 0.5, this.game.sizeFromHeight(2), this.id+'bullet', 'enemy'));
 
         document.addEventListener('keydown', (e) => {
@@ -65,7 +65,7 @@ export class Player extends Ship {
             id: this.id,
             x: this.x,
             y: this.y,
-            angle:this.object.angle
+            angle:this.angle
         });
     }
 

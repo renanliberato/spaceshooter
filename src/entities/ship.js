@@ -8,18 +8,20 @@ export class Ship extends GameObject {
     constructor(game, color) {
         super(game);
 
+        this.color = color;
         this.particles = []
         this.isShip = true;
         this.tag = 'ship';
         this.dx = 0;
         this.dy = 0;
-        this.angle = 0;
+        this.width = 25;
+        this.height = 25;
         this.rotateSpeed = 4;
         this.accelerationForce = 0.01;
         this.dashForce = 2;
         this.dashDecreaseForce = 0.07;
         this.dashDecreaseTreshold = 0.3;
-        this.trailSpeed = 0.1;
+        this.trailSpeed = 0.05;
         this.lastTrailTime = 0;
         
         this.updateToServerOn = 10;
@@ -33,17 +35,6 @@ export class Ship extends GameObject {
 
         this.emitter = createNanoEvents();
 
-        this.setObject(new fabric.Triangle({
-            selectable: false,
-            left: 0,
-            top: 0,
-            width: game.sizeFromWidth(5),
-            height: game.sizeFromWidth(5),
-            originX: 'center',
-            originY: 'center',
-            fill: color,
-        }));
-
         this.addComponent(new HealthBehaviour(this, 10));
     }
 
@@ -52,21 +43,46 @@ export class Ship extends GameObject {
     }
 
     createTrail() {
-        return;
-        if (this.game.time - this.lastTrailTime <= this.trailSpeed) {
+        if (this.game.time - this.lastTrailTime <= this.trailSpeed || this.dy == 0) {
             return;
         }
-
         this.lastTrailTime = this.game.time;
         
         var t = new Trail(this.game, this);
-        t.destroyAfter(this.trailSpeed);
-        t.moveAccordingToAngle('left', this.object.angle, this.game.sizeFromWidth(1));
+        t.destroyAfter(this.trailSpeed * 4);
+        t.moveAccordingToAngle('left', this.angle, this.game.sizeFromWidth(1));
+        this.game.instantiateEntity(t);
+
+        var t = new Trail(this.game, this);
+        t.destroyAfter(this.trailSpeed * 4);
+        t.moveAccordingToAngle('left', this.angle, this.game.sizeFromWidth(3));
         this.game.instantiateEntity(t);
         
         var t = new Trail(this.game, this);
-        t.destroyAfter(this.trailSpeed);
-        t.moveAccordingToAngle('left', this.object.angle, this.game.sizeFromWidth(-1));
+        t.destroyAfter(this.trailSpeed * 4);
+        t.moveAccordingToAngle('right', this.angle, this.game.sizeFromWidth(1));
+        this.game.instantiateEntity(t);
+
+        var t = new Trail(this.game, this);
+        t.destroyAfter(this.trailSpeed * 4);
+        t.moveAccordingToAngle('right', this.angle, this.game.sizeFromWidth(3));
+        this.game.instantiateEntity(t);
+
+        var t = new Trail(this.game, this);
+        t.destroyAfter(this.trailSpeed * 4);
+        t.moveAccordingToAngle('left', this.angle, this.game.sizeFromWidth(1));
+        t.moveAccordingToAngle('front', this.angle, this.game.sizeFromWidth(-2));
+        this.game.instantiateEntity(t);
+        
+        var t = new Trail(this.game, this);
+        t.destroyAfter(this.trailSpeed * 4);
+        t.moveAccordingToAngle('right', this.angle, this.game.sizeFromWidth(1));
+        t.moveAccordingToAngle('front', this.angle, this.game.sizeFromWidth(-2));
+        this.game.instantiateEntity(t);
+
+        var t = new Trail(this.game, this);
+        t.destroyAfter(this.trailSpeed * 4);
+        t.moveAccordingToAngle('front', this.angle, this.game.sizeFromWidth(-4));
         this.game.instantiateEntity(t);
     }
 
@@ -139,8 +155,8 @@ export class Ship extends GameObject {
             }
         }
 
-        this.moveAccordingToAngle('front', this.object.angle, this.dy);
-        this.moveAccordingToAngle('left', this.object.angle, this.dx);
+        this.moveAccordingToAngle('front', this.angle, this.dy);
+        this.moveAccordingToAngle('left', this.angle, this.dx);
     }
 
     update() {
@@ -156,7 +172,7 @@ export class Ship extends GameObject {
                 y: this.y,
                 dx: this.dx,
                 dy: this.dy,
-                angle: this.object.angle,
+                angle: this.angle,
                 health: this.getHealth().health,
                 rotatingLeft: this.rotatingLeft,
                 rotatingRight: this.rotatingRight,
@@ -167,6 +183,41 @@ export class Ship extends GameObject {
             });
             this.updateToServerOn = 1;
         }
+    }
+
+    render() {
+        const centerCoords = this.getCenterCanvasCoords();
+
+        this.drawPolygon(
+            centerCoords.x,
+            centerCoords.y,
+            3,
+            this.width,
+            1,
+            this.color,
+            this.color,
+            this.angle
+        );
+
+        const pointerCoords = this.getCoordsTowardsDirection(
+            centerCoords.x,
+            centerCoords.y,
+            'front',
+            this.angle,
+            this.width * 3 / 4
+        );
+        const pointerSize = this.width / 4;
+
+        this.drawPolygon(
+            pointerCoords.x,
+            pointerCoords.y,
+            3,
+            pointerSize,
+            1,
+            'red',
+            'red',
+            this.angle
+        );
     }
 
     onDestroy() {

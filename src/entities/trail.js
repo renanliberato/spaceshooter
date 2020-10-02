@@ -10,19 +10,9 @@ export class Trail extends GameObject
         this.dy = this.owner.dy;
         this.dx = this.owner.dx;
         this.distantiationSpeed = 0;
-        this.setObject(new fabric.Rect({
-            selectable: false,
-            left: 0,
-            top: 0,
-            fill: this.owner.object.fill,
-            width: this.game.sizeFromWidth(0.5),
-            height: this.game.sizeFromWidth(1 * this.owner.dy / 2),
-            originX: 'center',
-            originY: 'center',
-        }));
-        this.rotateToAngle(this.owner.object.angle);
+        this.rotateToAngle(this.owner.angle);
 
-        this.moveAccordingToAngle('front', this.owner.object.angle, this.owner.object.height * -1);
+        this.moveAccordingToAngle('front', this.owner.angle, this.owner.height * -1);
     }
 
     update() {
@@ -33,5 +23,19 @@ export class Trail extends GameObject
         if (this.game.time > this.destroyAt) {
             this.destroy();
         }
+    }
+
+    render() {
+        const centerCoords = this.getCenterCanvasCoords();
+        this.drawPolygon(
+            centerCoords.x,
+            centerCoords.y,
+            4,
+            2,
+            1,
+            this.owner.color,
+            this.owner.color,
+            this.angle
+        );
     }
 }

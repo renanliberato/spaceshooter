@@ -10,16 +10,18 @@ import { FireBehaviour } from './entities/components/fireBehaviour';
 
 export const initSinglePlayerGame = (cancellationToken, height, matchId) => {
     const width = height * 9 / 16;
-    const canvasEl = document.getElementById('arena');
-    canvasEl.setAttribute('height', height);
-    canvasEl.setAttribute('width', width);
+    const canvas = document.getElementById('arena');
+    canvas.setAttribute('height', height);
+    canvas.setAttribute('width', width);
 
-    const canvas = new fabric.Canvas('arena');
-    canvas.selection = false;
-    canvas.backgroundColor = "#000";
+    canvas.style.backgroundColor = "#000";
+
+    const context = canvas.getContext('2d');
+
     const game = {
         matchId: matchId,
         canvas: canvas,
+        context: context,
         visibleArea: {
             x: 0,
             y: 0,
@@ -33,12 +35,10 @@ export const initSinglePlayerGame = (cancellationToken, height, matchId) => {
         entities: [],
         instantiateEntity: (entity) => {
             game.entities.push(entity);
-            game.canvas.add(entity.object);
         },
         destroyEntity: (entity) => {
             entity.destroyed = true;
             game.entities = game.entities.filter(e => e.id != entity.id);
-            game.canvas.remove(entity.object);
         },
         ui: {
             playerHealthBar: null,
@@ -54,6 +54,7 @@ export const initSinglePlayerGame = (cancellationToken, height, matchId) => {
 
     window.game = game;
 
+    /*
     game.ui.playerHealthBar = new fabric.Rect({
         selectable: false,
         top: game.height - game.sizeFromHeight(2) - game.paddingV,
@@ -73,9 +74,11 @@ export const initSinglePlayerGame = (cancellationToken, height, matchId) => {
     game.canvas.add(game.ui.coordsText);
 
     game.canvas.add(game.ui.playerHealthBar);
+    */
     game.player = new Player(game);
     game.instantiateEntity(game.player);
-
+    game.instantiateEntity(new Wall(game, game.map.width / 2, game.map.height / 2, game.map.width + 50));
+    /*;
     // top wall
     var i = -45;
     while (i <= game.map.width + 45) {
@@ -103,6 +106,7 @@ export const initSinglePlayerGame = (cancellationToken, height, matchId) => {
         game.instantiateEntity(new Wall(game, game.map.width + 45, i));
         i += 25;
     }
+    */
 
     [...Array(5).keys()].forEach(element => {
         var enemy = new Enemy(game);
@@ -130,12 +134,13 @@ export const initSinglePlayerGame = (cancellationToken, height, matchId) => {
         game.time += dt;
 
         game.visibleArea = {
-            x: game.player.x - game.canvas.getWidth() / 2,
-            x2: game.player.x + game.canvas.getWidth() / 2,
-            y: game.player.y - game.canvas.getHeight() / 2,
-            y2: game.player.y + game.canvas.getHeight() / 2,
+            x: game.player.x + game.player.width / 2 - width / 2,
+            x2: game.player.x + game.player.width / 2 + width / 2,
+            y: game.player.y + game.player.height / 2 - height / 2,
+            y2: game.player.y + game.player.height / 2 + height / 2,
         }
 
+        /*
         game.canvas.remove(game.ui.coordsText);
         game.ui.coordsText = new fabric.Text(
             `enemies id: ${game.entities.filter(e => e.isShip && e.id != game.player.id).map(e => e.id).join('\n')}\n\nfps: ${((1000 / dt) / 1000).toFixed(0)}`,
@@ -147,12 +152,16 @@ export const initSinglePlayerGame = (cancellationToken, height, matchId) => {
                 fontSize: 12
             });
         game.canvas.add(game.ui.coordsText);
-
+        */
         game.entities.forEach(e => e.update());
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        game.entities.forEach(e => e.render());
 
         enemyMarks.forEach(m => game.canvas.remove(m));
         enemyMarks = [];
 
+        /*
         game.entities.filter(e => e.tag == 'enemy').forEach(e => {
             var angle = game.player.getAngleTowardsObject(e);
             var mark = new fabric.Triangle({
@@ -171,8 +180,7 @@ export const initSinglePlayerGame = (cancellationToken, height, matchId) => {
 
         game.ui.playerHealthBar.set('width', game.sizeFromWidth((game.player.getHealth().health / game.player.getHealth().maxHealth) * 100) - game.paddingH * 2);
         game.ui.playerHealthBar.setCoords();
-
-        game.canvas.renderAll();
+        */
         window.requestAnimationFrame(render);
     };
 

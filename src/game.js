@@ -10,7 +10,7 @@ import { HealthBehaviour } from './entities/components/healthBehaviour';
 import { FireBehaviour } from './entities/components/fireBehaviour';
 import { getGame } from './helpers/game';
 
-export const initGame = (cancellationToken, height, matchId) => {
+export const initGame = (cancellationToken, username, height, matchId) => {
     const width = height * 9 / 16;
     
     const game = getGame(matchId, cancellationToken, height, width);
@@ -18,6 +18,7 @@ export const initGame = (cancellationToken, height, matchId) => {
     window.game = game;
 
     game.player = new Player(game);
+    game.player.username = username;
     game.player.addComponent(new PlayerSynchronizer(game.player));
     game.instantiateEntity(game.player);
 
@@ -27,11 +28,25 @@ export const initGame = (cancellationToken, height, matchId) => {
         .withAutomaticReconnect()
         .build();
 
-    simplerConnection.on("ShipAddedtoGame", function (id) {
+    simplerConnection.on("ShipAddedtoGame", function (id, theUsername) {
         var enemy = new EnemyPlayer(game);
+        enemy.username = theUsername;
         enemy.id = id;
         game.instantiateEntity(enemy);
         document.dispatchEvent(new CustomEvent('player_entered'))
+    });
+
+    simplerConnection.on("ShipQuitTheGame", function (id) {
+        const thePlayer = game.entities.find(e => e.id == id);
+
+        if (thePlayer) {
+            thePlayer.destroy();
+            document.dispatchEvent(new CustomEvent('enemy_destroyed', {
+                detail: {
+                    enemiesLeft: game.entities.filter(e => e.tag == 'enemy' && !e.destroyed).length
+                }
+            }))
+        }
     });
 
     simplerConnection.on("PlayerDestroyed", function (id, remainingPlayers) {
@@ -69,7 +84,7 @@ export const initGame = (cancellationToken, height, matchId) => {
     simplerConnection.start().then(function () {
         console.log('connected')
         game.isConnected = true;
-        simplerConnection.invoke("AddShipToGame", game.matchId, game.player.id);
+        simplerConnection.invoke("AddShipToGame", game.matchId, game.player.id, username);
     }).catch(function (err) {
         return console.error(err.toString());
     });

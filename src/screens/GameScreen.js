@@ -64,8 +64,10 @@ export function GameScreenComponent({ navigateBack, navigateTo, matchId, user })
         document.addEventListener('enemy_destroyed', onEnemyDestroyed);
 
         const height = Math.min(gameContainerRef.current.offsetHeight, window.innerHeight);
+        console.log(user.state.username);
         gameDisposer.current.dispose = initGame(
             cancellationTokenRef.current,
+            user.state.username,
             height,
             matchId
         );

@@ -23,6 +23,7 @@ export class Ship extends GameObject {
         this.dashDecreaseTreshold = 0.3;
         this.trailSpeed = 0.05;
         this.lastTrailTime = 0;
+        this.username = 'Ship';
         
         this.updateToServerOn = 10;
 
@@ -191,6 +192,10 @@ export class Ship extends GameObject {
             'red',
             this.angle
         );
+
+        this.game.context.font = "12px Comic Sans MS";
+        this.game.context.fillStyle = '#fff';
+        this.game.context.fillText(this.username, centerCoords.x - (this.username.length * 3), centerCoords.y - this.width - 10);
     }
 
     onDestroy() {

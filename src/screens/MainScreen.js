@@ -17,6 +17,19 @@ export function MainScreenComponent({ navigateTo, user }) {
     const [matchId, setMatchId] = React.useState(Math.random().toString(36).substring(7));
     const [difficulty, setDifficulty] = React.useState("easy");
     const [editingName, setEditingName] = React.useState(false);
+    const [matches, setMatches] = React.useState([]);
+
+    React.useEffect(() => {
+        fetch(`${API_BASE_URL}/matches/list`, {
+                headers: {
+                    "Accept": "application/json"
+                },
+            })
+            .then(res => res.json())
+            .then(res => {
+                setMatches(res);
+            });
+    }, []);
 
     React.useEffect(() => {
         const urlMatchId = new URLSearchParams(document.location.search).get('matchid');
@@ -94,6 +107,46 @@ export function MainScreenComponent({ navigateTo, user }) {
             <details open style={{marginTop: 10}}>
                 <summary>Play Multiplayer</summary>
                 <div>
+                    {matches.length == 0
+                    ? (
+                        <label style={{marginTop: 10}}>No live matches yet</label>
+                    ) : (
+                        <>
+                            <label style={{marginTop: 10}}>Live matches</label>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Players</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {matches.map(match => (
+                                        <tr>
+                                            <td>{match.matchId}</td>
+                                            <td>{match.connectionIds.length}</td>
+                                            <td><a onClick={(e) => {
+                                                e.preventDefault();
+                                                fetch(`${API_BASE_URL}/matches/create`, {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type": "application/json"
+                                                    },
+                                                    body: JSON.stringify(match.matchId)
+                                                })
+                                                .then(res => {
+                                                    navigateTo(GameScreen, {
+                                                        matchId: match.matchId
+                                                    });
+                                                });
+                                            }}>Enter</a></td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </>
+                    )}
                     <label style={{marginTop: 10}}>Match ID</label>
                     <input style={{marginTop: 10}} value={matchId} onChange={e => setMatchId(e.target.value)} />
                     <div style={{

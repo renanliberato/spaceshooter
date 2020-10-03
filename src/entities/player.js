@@ -1,5 +1,6 @@
 import { Ship } from './ship';
 import { FireBehaviour } from './components/fireBehaviour';
+import { HealthBehaviour } from './components/healthBehaviour';
 
 const keycode = require('keycode');
 
@@ -10,7 +11,7 @@ export class Player extends Ship {
         this.tag = 'player';
         this.x = 100;
         this.y = 100;
-        this.addComponent(new FireBehaviour(this, 0.5, this.game.sizeFromHeight(2), this.id+'bullet', 'enemy'));
+        this.addComponent(new FireBehaviour(this, 0.5, this.game.sizeFromHeight(6), this.id+'bullet', 'enemy'));
 
         document.addEventListener('keydown', (e) => {
             switch (keycode(e)) {
@@ -57,6 +58,14 @@ export class Player extends Ship {
                     break;
             }
         });
+
+        this.getComponent(HealthBehaviour).onHealthChange = (health, healthPercent) => {
+            document.dispatchEvent(new CustomEvent('player_health_updated', {
+                detail: {
+                    health: healthPercent * 100
+                }
+            }))
+        }
     }
 
     onFire() {
@@ -67,6 +76,10 @@ export class Player extends Ship {
             y: this.y,
             angle:this.angle
         });
+    }
+
+    update() {
+        super.update();
     }
 
     onDestroy() {

@@ -17,6 +17,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-simple-stack-navigation": "^1.1.0",
+    "unstated": "^2.1.1",
     "uuid": "^8.3.0"
   },
   "devDependencies": {

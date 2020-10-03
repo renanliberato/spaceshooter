@@ -14,11 +14,21 @@ export class HealthBehaviour extends Component
         }
     }
 
+    onHealthChange() {
+
+    }
+
     takeDamage(amount) {
         this.health -= amount;
+
+        this.onHealthChange(this.health, this.getPercent());
 
         if (this.health <= 0) {
             this.gameobject.destroy();
         }
+    }
+
+    getPercent() {
+        return this.health / this.maxHealth;
     }
 }

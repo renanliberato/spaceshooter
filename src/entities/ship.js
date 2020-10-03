@@ -14,12 +14,12 @@ export class Ship extends GameObject {
         this.tag = 'ship';
         this.dx = 0;
         this.dy = 0;
-        this.width = 25;
-        this.height = 25;
+        this.width = 12.5;
+        this.height = 12.5;
         this.rotateSpeed = 4;
-        this.accelerationForce = 0.01;
-        this.dashForce = 2;
-        this.dashDecreaseForce = 0.07;
+        this.accelerationForce = 0.04;
+        this.dashForce = 4;
+        this.dashDecreaseForce = 0.04;
         this.dashDecreaseTreshold = 0.3;
         this.trailSpeed = 0.05;
         this.lastTrailTime = 0;
@@ -52,46 +52,19 @@ export class Ship extends GameObject {
         t.destroyAfter(this.trailSpeed * 4);
         t.moveAccordingToAngle('left', this.angle, this.game.sizeFromWidth(1));
         this.game.instantiateEntity(t);
-
-        var t = new Trail(this.game, this);
-        t.destroyAfter(this.trailSpeed * 4);
-        t.moveAccordingToAngle('left', this.angle, this.game.sizeFromWidth(3));
-        this.game.instantiateEntity(t);
         
         var t = new Trail(this.game, this);
         t.destroyAfter(this.trailSpeed * 4);
         t.moveAccordingToAngle('right', this.angle, this.game.sizeFromWidth(1));
-        this.game.instantiateEntity(t);
-
-        var t = new Trail(this.game, this);
-        t.destroyAfter(this.trailSpeed * 4);
-        t.moveAccordingToAngle('right', this.angle, this.game.sizeFromWidth(3));
-        this.game.instantiateEntity(t);
-
-        var t = new Trail(this.game, this);
-        t.destroyAfter(this.trailSpeed * 4);
-        t.moveAccordingToAngle('left', this.angle, this.game.sizeFromWidth(1));
-        t.moveAccordingToAngle('front', this.angle, this.game.sizeFromWidth(-2));
-        this.game.instantiateEntity(t);
-        
-        var t = new Trail(this.game, this);
-        t.destroyAfter(this.trailSpeed * 4);
-        t.moveAccordingToAngle('right', this.angle, this.game.sizeFromWidth(1));
-        t.moveAccordingToAngle('front', this.angle, this.game.sizeFromWidth(-2));
-        this.game.instantiateEntity(t);
-
-        var t = new Trail(this.game, this);
-        t.destroyAfter(this.trailSpeed * 4);
-        t.moveAccordingToAngle('front', this.angle, this.game.sizeFromWidth(-4));
         this.game.instantiateEntity(t);
     }
 
     accelerateFrontwards() {
-        this.dy = Math.min(5, this.dy + this.acceleratingFrontwards * this.game.sizeFromHeight(this.accelerationForce));
+        this.dy = Math.min(4, this.dy + this.acceleratingFrontwards * this.game.sizeFromHeight(this.accelerationForce));
     }
 
     accelerateBackwards() {
-        this.dy = Math.max(-5, this.dy - this.acceleratingBackwards * this.game.sizeFromHeight(this.accelerationForce));
+        this.dy = Math.max(-4, this.dy - this.acceleratingBackwards * this.game.sizeFromHeight(this.accelerationForce));
     }
 
     deaccelerateFrontwards() {

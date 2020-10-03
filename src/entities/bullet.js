@@ -1,6 +1,7 @@
 import { GameObject } from './gameobject';
 import { AudioManager } from '../audios/AudioManager';
 import { HealthBehaviour } from './components/HealthBehaviour';
+import { collides } from '../helpers';
 
 export class Bullet extends GameObject {
     constructor(game, tag, owner, targetTag, speed) {
@@ -34,7 +35,7 @@ export class Bullet extends GameObject {
 
         var hitAnyone = false;
         this.game.entities.filter(e => e.isShip && e.id != this.owner.id && (!this.targetTag || e.tag == this.targetTag)).forEach(ship => {
-            if (this.object.intersectsWithObject(ship.object)) {
+            if (collides(this, ship)) {
                 if (this.isVisible)
                     AudioManager.play(AudioManager.audios.hit);
                 

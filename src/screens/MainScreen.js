@@ -2,7 +2,7 @@ import React from 'react';
 import { GameScreen } from './GameScreen';
 import { SinglePlayerGameScreen } from './SinglePlayerGameScreen';
 import { MapEditorScreen } from './MapEditorScreen';
-import { isMobile, API_BASE_URL } from '../index';
+import { isMobile, API_BASE_URL } from '../config';
 import { UserConsumer } from '../contexts/UserContext';
 
 export function MainScreen(props) {

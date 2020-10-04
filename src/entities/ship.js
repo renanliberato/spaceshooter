@@ -3,6 +3,7 @@ import { AudioManager } from '../audios/AudioManager';
 import { Trail } from './trail';
 import { HealthBehaviour } from './components/healthBehaviour';
 import { createNanoEvents } from 'nanoevents';
+import { isMobile } from '../config';
 
 export class Ship extends GameObject {
     constructor(game, color) {
@@ -24,6 +25,7 @@ export class Ship extends GameObject {
         this.trailSpeed = 0.05;
         this.lastTrailTime = 0;
         this.username = 'Ship';
+        this.maxSpeed = isMobile ? 2 : 5;
         
         this.updateToServerOn = 10;
 
@@ -61,11 +63,11 @@ export class Ship extends GameObject {
     }
 
     accelerateFrontwards() {
-        this.dy = Math.min(4, this.dy + this.acceleratingFrontwards * this.game.sizeFromHeight(this.accelerationForce));
+        this.dy = Math.min(this.maxSpeed, this.dy + this.acceleratingFrontwards * this.game.sizeFromHeight(this.accelerationForce));
     }
 
     accelerateBackwards() {
-        this.dy = Math.max(-4, this.dy - this.acceleratingBackwards * this.game.sizeFromHeight(this.accelerationForce));
+        this.dy = Math.max(-this.maxSpeed, this.dy - this.acceleratingBackwards * this.game.sizeFromHeight(this.accelerationForce));
     }
 
     deaccelerateFrontwards() {

@@ -1,11 +1,10 @@
-const fabric = require('fabric').fabric;
 import { Player } from './entities/player';
 import { Enemy } from './entities/enemy';
 import { Wall } from './entities/wall';
 import { PlayerSynchronizer } from './entities/components/playerSynchronizer';
 import { HubConnectionBuilder } from '@microsoft/signalr';
 import { EnemyPlayer } from './entities/enemyPlayer';
-import { API_BASE_URL } from './index';
+import { API_BASE_URL } from './config';
 import { HealthBehaviour } from './entities/components/healthBehaviour';
 import { FireBehaviour } from './entities/components/fireBehaviour';
 import { getGame } from './helpers/game';

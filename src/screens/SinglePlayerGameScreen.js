@@ -65,6 +65,7 @@ export function SinglePlayerGameScreenComponent({ navigateBack, navigateTo, diff
         const height = Math.min(gameContainerRef.current.offsetHeight, window.innerHeight);
         gameDisposer.current.dispose = initSinglePlayerGame(
             cancellationTokenRef.current,
+            user.state.username,
             difficulty,
             height
         );

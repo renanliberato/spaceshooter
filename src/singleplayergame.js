@@ -1,4 +1,3 @@
-const fabric = require('fabric').fabric;
 import { Player } from './entities/player';
 import { Enemy } from './entities/enemy';
 import { EnemyMark } from './entities/enemyMark';
@@ -10,12 +9,13 @@ const enemiesPerDifficulty = {
     hard: 10
 }
 
-export const initSinglePlayerGame = (cancellationToken, difficulty, height, matchId) => {
+export const initSinglePlayerGame = (cancellationToken, username, difficulty, height, matchId) => {
     const width = height * 9 / 16;
     
     const game = getGame(matchId, cancellationToken, height, width);
 
     game.player = new Player(game);
+    game.player.username = username;
     game.instantiateEntity(game.player);
 
     [...Array(enemiesPerDifficulty[difficulty]).keys()].forEach(element => {

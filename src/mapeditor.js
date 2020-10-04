@@ -1,4 +1,3 @@
-const fabric = require('fabric').fabric;
 import { Wall } from './entities/wall';
 
 export const initMapEditor = (cancellationToken, height, mapId) => {

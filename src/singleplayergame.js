@@ -38,5 +38,6 @@ export const initSinglePlayerGame = (cancellationToken, username, difficulty, ma
     game.render();
 
     return () => {
+        game.entities.forEach(e => e.destroy());
     };
 }

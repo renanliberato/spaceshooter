@@ -17,6 +17,7 @@ export function getGame(matchId, cancellationToken, height, width) {
     var lastUpdate = Date.now();
 
     const game = {
+        paused: false,
         time: 0,
         matchId: matchId,
         canvas: canvas,
@@ -48,6 +49,11 @@ export function getGame(matchId, cancellationToken, height, width) {
         render: () => {
             if (cancellationToken.isCancelled)
                 return;
+
+            if (game.paused) {
+                window.requestAnimationFrame(game.render);
+                return;
+            }
 
             var now = Date.now();
             var dt = (now - lastUpdate) / 1000; // toSeconds

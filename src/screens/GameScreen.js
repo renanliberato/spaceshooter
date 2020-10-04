@@ -2,6 +2,7 @@ import React from 'react';
 import { initGame } from '../game';
 import { PostGameScreen } from './PostGameScreen';
 import { UserConsumer } from '../contexts/UserContext';
+import { MatchMenu } from '../components/MatchMenu';
 
 export function GameScreen(props) {
     return (
@@ -113,6 +114,7 @@ export function GameScreenComponent({ navigateBack, navigateTo, matchId, user })
                             backgroundColor: 'red'
                         }}></div>
                     </div>
+                    <MatchMenu navigateBack={navigateBack} />
                 </div>
             </div>
         </>

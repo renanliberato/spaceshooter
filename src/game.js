@@ -104,5 +104,6 @@ export const initGame = (cancellationToken, username, matchId) => {
     return () => {
         game.isConnected = false;
         game.connection.stop();
+        game.entities.forEach(e => e.destroy());
     };
 }

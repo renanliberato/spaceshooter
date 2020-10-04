@@ -2,6 +2,8 @@ import React from 'react';
 import { initSinglePlayerGame } from '../singleplayergame';
 import { PostGameScreen } from './PostGameScreen';
 import { UserConsumer } from '../contexts/UserContext';
+import { MatchMenu } from '../components/MatchMenu';
+const keycode = require('keycode');
 
 export function SinglePlayerGameScreen(props) {
     return (
@@ -14,7 +16,8 @@ export function SinglePlayerGameScreen(props) {
 export function SinglePlayerGameScreenComponent({ navigateBack, navigateTo, difficulty, user }) {
     const [uiState, setUiState] = React.useState({
         enemiesLeft: 0,
-        health: 100
+        health: 100,
+        isDisplayingMenu: false
     });
 
     const cancellationTokenRef = React.useRef({
@@ -57,6 +60,7 @@ export function SinglePlayerGameScreenComponent({ navigateBack, navigateTo, diff
                 navigateTo(PostGameScreen, { result: 'enemy_destroyed' })
             }
         }
+
         document.addEventListener('game_started', onGameStarted);
         document.addEventListener('player_destroyed', onPlayerDestroyed);
         document.addEventListener('player_health_updated', onHealthUpdate);
@@ -112,6 +116,7 @@ export function SinglePlayerGameScreenComponent({ navigateBack, navigateTo, diff
                             backgroundColor: 'red'
                         }}></div>
                     </div>
+                    <MatchMenu navigateBack={navigateBack} />
                 </div>
             </div>
         </>

@@ -66,8 +66,7 @@ export function SinglePlayerGameScreenComponent({ navigateBack, navigateTo, diff
         gameDisposer.current.dispose = initSinglePlayerGame(
             cancellationTokenRef.current,
             user.state.username,
-            difficulty,
-            height
+            difficulty
         );
 
         return () => {

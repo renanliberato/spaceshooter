@@ -206,6 +206,13 @@ export function MainScreenComponent({ navigateTo, user }) {
                     </tbody>
                 </table>
             </div>
+            <div style={{
+                position: 'fixed',
+                bottom: 20,
+                right: 20,
+            }}>
+                <button>Chat</button>
+            </div>
         </div>
     );
 }

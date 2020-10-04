@@ -9,10 +9,8 @@ import { HealthBehaviour } from './entities/components/healthBehaviour';
 import { FireBehaviour } from './entities/components/fireBehaviour';
 import { getGame } from './helpers/game';
 
-export const initGame = (cancellationToken, username, height, matchId) => {
-    const width = height * 9 / 16;
-    
-    const game = getGame(matchId, cancellationToken, height, width);
+export const initGame = (cancellationToken, username, matchId) => {
+    const game = getGame(matchId, cancellationToken, window.innerHeight, window.innerWidth);
 
     window.game = game;
 

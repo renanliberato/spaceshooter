@@ -9,10 +9,9 @@ const enemiesPerDifficulty = {
     hard: 10
 }
 
-export const initSinglePlayerGame = (cancellationToken, username, difficulty, height, matchId) => {
-    const width = height * 9 / 16;
+export const initSinglePlayerGame = (cancellationToken, username, difficulty, matchId) => {
     
-    const game = getGame(matchId, cancellationToken, height, width);
+    const game = getGame(matchId, cancellationToken, window.innerHeight, window.innerWidth);
 
     game.player = new Player(game);
     game.player.username = username;

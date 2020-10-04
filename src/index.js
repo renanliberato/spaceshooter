@@ -17,15 +17,13 @@ window.oncontextmenu = function(event) {
 
 const DesktopApp = () => {
     const { currentScreen: { ScreenComponent, params }, navigateTo, navigateBack } = useNavigation(IntroductionScreen);
-    const height = window.innerHeight;
-    const width = height * 9 / 16;
 
     return (
         <UserProvider>
             <div style={{
                 alignSelf: 'center',
-                height,
-                width,
+                height: '100%',
+                width: '100%',
             }}>
                 <ScreenComponent navigateTo={navigateTo} navigateBack={navigateBack} {...params} />
             </div>

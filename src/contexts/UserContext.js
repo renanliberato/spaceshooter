@@ -51,7 +51,7 @@ class UserContainer extends Container {
             const newState = { ...state };
 
             updater(newState);
-
+            
             persistUser(newState);
 
             return newState;

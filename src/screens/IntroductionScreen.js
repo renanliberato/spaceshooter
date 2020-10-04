@@ -19,7 +19,7 @@ export function IntroductionScreenComponent({ navigateTo, user }) {
             navigateTo(MainScreen);
             return;
         }
-    }, [user]);
+    }, [user.state.username]);
 
     return (
         <div style={{
@@ -33,7 +33,6 @@ export function IntroductionScreenComponent({ navigateTo, user }) {
                 <input value={username} onChange={e => setUsername(e.target.value)} />
                 <button style={{ marginBottom: 10 }} onClick={() => {
                     user.updateUsername(username);
-                    navigateTo(MainScreen);
                 }}>Continue</button>
         </div>
     );

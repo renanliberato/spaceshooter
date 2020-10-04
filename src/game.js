@@ -2,7 +2,7 @@ import { Player } from './entities/player';
 import { Enemy } from './entities/enemy';
 import { Wall } from './entities/wall';
 import { PlayerSynchronizer } from './entities/components/playerSynchronizer';
-import { HubConnectionBuilder } from '@microsoft/signalr';
+import { getHubConnection } from './services/hub';
 import { EnemyPlayer } from './entities/enemyPlayer';
 import { API_BASE_URL } from './config';
 import { HealthBehaviour } from './entities/components/healthBehaviour';
@@ -19,11 +19,7 @@ export const initGame = (cancellationToken, username, matchId) => {
     game.player.addComponent(new PlayerSynchronizer(game.player));
     game.instantiateEntity(game.player);
 
-    var simplerConnection = new HubConnectionBuilder()
-        .withUrl(`${API_BASE_URL}/simplermatchhub`)
-        //.withUrl("https://renanliberato-spaceshooterserver.azurewebsites.net/simplermatchhub")
-        .withAutomaticReconnect()
-        .build();
+    var simplerConnection = getHubConnection('simplermatchhub');
 
     simplerConnection.on("ShipAddedtoGame", function (id, theUsername) {
         var enemy = new EnemyPlayer(game);
@@ -92,6 +88,7 @@ export const initGame = (cancellationToken, username, matchId) => {
 
     simplerConnection.onreconnected(connectionId => {
         game.isConnected = true;
+        simplerConnection.invoke("AddShipToGame", game.matchId, game.player.id, username);
     });
 
     game.connection = simplerConnection;

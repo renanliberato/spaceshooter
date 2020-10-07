@@ -27,7 +27,7 @@ export function MultiplayerPlayerGameModeComponent({ navigateTo, user }) {
                 setMatches(res);
                 setIsConnected(true);
             });
-    });
+    }, []);
 
     React.useEffect(() => {
         const urlMatchId = new URLSearchParams(document.location.search).get('matchid');
@@ -102,7 +102,6 @@ export function MultiplayerPlayerGameModeComponent({ navigateTo, user }) {
                     <i style={{flex: 1, textAlign: 'center'}}>Losses: {user.state.matches.multiplayer.losses}</i>
                 </div>
                 <button disabled={!isConnected} style={{ marginTop: 10, marginBottom: 10 }} onClick={() => {
-                    console.log('creating match');
 
                     fetch(`${API_BASE_URL}/matches/create`, {
                         method: "POST",

@@ -16,7 +16,7 @@ export class Bullet extends GameObject {
         this.y = this.owner.y;
         this.dy = speed;
         this.width = 5;
-        this.height = 5;
+        this.height = 10;
 
         this.rotateToAngle(this.owner.angle);
 

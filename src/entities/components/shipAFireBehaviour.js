@@ -2,7 +2,7 @@ import { GameObject } from '../gameobject';
 import { AudioManager } from '../../audios/AudioManager';
 import { Bullet } from '../bullet';
 
-export class FireBehaviour extends GameObject
+export class ShipAFireBehaviour extends GameObject
 {
     constructor(gameobject, game, firingSpeed, bulletSpeed, bulletTag, bulletTargetTag) {
         super(game);

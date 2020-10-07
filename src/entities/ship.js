@@ -19,8 +19,8 @@ export class Ship extends GameObject {
         this.height = 25;
         this.rotateSpeed = 4;
         this.accelerationForce = 0.04;
-        this.dashForce = 4;
-        this.dashDecreaseForce = 0.04;
+        this.dashForce = 7;
+        this.dashDecreaseForce = 0.12;
         this.dashDecreaseTreshold = 0.3;
         this.trailSpeed = 0.05;
         this.lastTrailTime = 0;

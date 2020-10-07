@@ -1,6 +1,6 @@
 import { GameObject } from '../gameobject';
 import { HealthBehaviour } from './healthBehaviour';
-import { FireBehaviour } from './fireBehaviour';
+import { ShipAFireBehaviour } from './shipAFireBehaviour';
 import { loadImage } from 'canvas';
 import IMAGES from '../../images/images';
 
@@ -9,7 +9,9 @@ export class ShipABehaviour extends GameObject {
         super(game);
         this.gameobject = gameobject;
 
-        this.gameobject.addComponent(new FireBehaviour(this.gameobject, this.game, 0.5, 6, this.gameobject.id+'bullet', enemytag));
+        this.addComponent(new ShipAFireBehaviour(this.gameobject, this.game, 0.5, 12, this.gameobject.id+'bullet', enemytag));
+        this.fireBehaviour = this.getComponent(ShipAFireBehaviour);
+        this.gameobject.shipBehaviour = this;
 
         loadImage(IMAGES[`playerShip2_${color}`]).then(image => {
             this.gameobject.shipImage = image;

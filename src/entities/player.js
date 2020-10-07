@@ -1,5 +1,4 @@
 import { Ship } from './ship';
-import { FireBehaviour } from './components/fireBehaviour';
 import { ShipABehaviour } from './components/shipABehaviour';
 import { HealthBehaviour } from './components/healthBehaviour';
 import { isMobile } from '../config';
@@ -26,7 +25,7 @@ export class Player extends Ship {
 
             document.addEventListener('keyup', this.onKeyup);
         } else {
-            this.getComponent(FireBehaviour).isFiring = true;
+            this.shipBehaviour.fireBehaviour.isFiring = true;
             this.acceleratingFrontwards = true;
             const leftSide = window.innerWidth / 3;
             const rightSide = window.innerWidth * 2 / 3;
@@ -69,7 +68,7 @@ export class Player extends Ship {
                 this.dashRight();
                 break;
             case 'space':
-                this.getComponent(FireBehaviour).isFiring = true;
+                this.shipBehaviour.fireBehaviour.isFiring = true;
                 break;
 
         }
@@ -89,7 +88,7 @@ export class Player extends Ship {
                 this.rotatingRight = false;
                 break;
             case 'space':
-                this.getComponent(FireBehaviour).isFiring = false;
+                this.shipBehaviour.fireBehaviour.isFiring = false;
                 break;
         }
     }

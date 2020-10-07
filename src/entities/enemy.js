@@ -1,5 +1,4 @@
 import { Ship } from './ship';
-import { FireBehaviour } from './components/fireBehaviour';
 import { HealthBehaviour } from './components/healthBehaviour';
 import { ShipABehaviour } from './components/shipABehaviour';
 
@@ -15,7 +14,6 @@ export class Enemy extends Ship {
 
     update() {
         super.update();
-        const fireBehaviour = this.getComponent(FireBehaviour);
 
         const players = this.game.entities.filter(e => e.tag == 'player');
         if (players.length == 0) {
@@ -28,7 +26,7 @@ export class Enemy extends Ship {
 
         const isFarFromPlayer = distanceFromPlayer > 80;
 
-        if (fireBehaviour) fireBehaviour.isFiring = false;
+        this.shipBehaviour.fireBehaviour.isFiring = false;
         this.acceleratingFrontwards = false;
         this.acceleratingBackwards = false;
         
@@ -40,7 +38,7 @@ export class Enemy extends Ship {
                 this.acceleratingFrontwards = true;
                 this.acceleratingBackwards = false;
             } else {
-                if (fireBehaviour) fireBehaviour.isFiring = true;
+                this.shipBehaviour.fireBehaviour.isFiring = true;
             }
         }
     }

@@ -6,7 +6,6 @@ import { getHubConnection } from './services/hub';
 import { EnemyPlayer } from './entities/enemyPlayer';
 import { API_BASE_URL } from './config';
 import { HealthBehaviour } from './entities/components/healthBehaviour';
-import { FireBehaviour } from './entities/components/fireBehaviour';
 import { getGame } from './helpers/game';
 
 export const initGame = (cancellationToken, username, matchId) => {
@@ -73,7 +72,7 @@ export const initGame = (cancellationToken, username, matchId) => {
         if (!enemy)
             return;
 
-        enemy.getComponent(FireBehaviour).remoteFire(x, y, angle);
+        enemy.shipBehaviour.fireBehaviour.remoteFire(x, y, angle);
     });
 
     simplerConnection.start().then(function () {

@@ -151,7 +151,7 @@ export class GameObject {
     
     onDestroy() {
         this.components.forEach(c => c.onDestroy && c.onDestroy());
-        this.disposables.forEach(d => d());
+        setTimeout(() => this.disposables.forEach(d => d()), 200);
     }
 
     drawPolygon(centerX, centerY, sideCount, size, strokeWidth, strokeColor, fillColor, rotationDegrees) {

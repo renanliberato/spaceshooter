@@ -9,6 +9,8 @@ export class ShipCBehaviour extends GameObject {
         super(game);
         this.gameobject = gameobject;
 
+        color = color == 'orange' ? 'red' : color;
+
         this.addComponent(new ShipCFireBehaviour(this.gameobject, this.game, 1, 4, this.gameobject.id+'bullet', enemytag));
         this.fireBehaviour = this.getComponent(ShipCFireBehaviour);
         this.gameobject.shipBehaviour = this;

@@ -67,6 +67,7 @@ export function GameScreenComponent({ navigateBack, navigateTo, matchId, user })
         gameDisposer.current.dispose = initGame(
             cancellationTokenRef.current,
             user.state.username,
+            user.state.ship,
             matchId
         );
 

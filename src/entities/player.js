@@ -1,12 +1,20 @@
 import { Ship } from './ship';
 import { ShipABehaviour } from './components/shipABehaviour';
+import { ShipBBehaviour } from './components/shipBBehaviour';
+import { ShipCBehaviour } from './components/shipCBehaviour';
 import { HealthBehaviour } from './components/healthBehaviour';
 import { isMobile } from '../config';
 
 const keycode = require('keycode');
 
+const shipToClass = {
+    Alpha: ShipABehaviour,
+    Beta: ShipBBehaviour,
+    Ovni: ShipCBehaviour,
+}
+
 export class Player extends Ship {
-    constructor(game) {
+    constructor(game, ship) {
         super(game, '#fff');
 
         this.onKeydown = this.onKeydown.bind(this);
@@ -17,7 +25,8 @@ export class Player extends Ship {
         this.x = 100;
         this.y = 100;
 
-        this.addComponent(new ShipABehaviour(this, this.game, 'blue', 'enemy'));
+        const Class = shipToClass[ship];
+        this.addComponent(new Class(this, this.game, 'blue', 'enemy'));
 
         if (!isMobile) {
 

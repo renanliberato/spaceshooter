@@ -4,13 +4,16 @@ import { UserConsumer } from '../contexts/UserContext';
 export function ProfileHeader(props) {
     return (
         <UserConsumer>
-            <ProfileHeaderComponent {...props} />
+            <ProfileNameHeaderComponent {...props} />
+            <div style={{marginTop: 10}}></div>
+            <ProfileShipHeaderComponent {...props} />
         </UserConsumer>
     );
 }
 
-export function ProfileHeaderComponent({ user }) {
+export function ProfileNameHeaderComponent({ user }) {
     const [editingName, setEditingName] = React.useState(false);
+    const [selectingShip, setSelectingShip] = React.useState('shipA');
 
     if (editingName === false)
         return (
@@ -37,6 +40,43 @@ export function ProfileHeaderComponent({ user }) {
                 e.preventDefault();
                 user.updateUsername(editingName);
                 setEditingName(false);
+            }}>Done</button>
+        </div>
+    );
+}
+
+export function ProfileShipHeaderComponent({ user }) {
+    const [selectingShip, setSelectingShip] = React.useState(false);
+
+    if (selectingShip === false)
+        return (
+            <div style={{
+                flexDirection: 'row',
+                alignSelf: 'flex-start',
+                alignItems: 'center'
+            }}>
+                <span style={{marginRight: 20}}>Selected ship: {user.state.ship}</span>
+                <button onClick={(e) => {
+                    setSelectingShip(user.state.ship);
+                }}>Change ship</button>
+            </div>
+        );
+
+    return (
+        <div style={{
+            flexDirection: 'row',
+            alignSelf: 'flex-start',
+            alignItems: 'center'
+        }}>
+            <select style={{marginRight: 20}} value={selectingShip} onChange={e => setSelectingShip(e.target.value)}>
+                <option value='Alpha'>Alpha</option>
+                <option value='Beta'>Beta</option>
+                <option value='Ovni'>Ovni</option>
+            </select>
+            <button onClick={(e) => {
+                e.preventDefault();
+                user.updateShip(selectingShip);
+                setSelectingShip(false);
             }}>Done</button>
         </div>
     );

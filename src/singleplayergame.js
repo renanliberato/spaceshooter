@@ -9,11 +9,11 @@ const enemiesPerDifficulty = {
     hard: 10
 }
 
-export const initSinglePlayerGame = (cancellationToken, username, difficulty, matchId) => {
+export const initSinglePlayerGame = (cancellationToken, username, ship, difficulty, matchId) => {
     
     const game = getGame(matchId, cancellationToken, window.innerHeight, window.innerWidth);
 
-    game.player = new Player(game);
+    game.player = new Player(game, ship);
     game.player.username = username;
     game.instantiateEntity(game.player);
 

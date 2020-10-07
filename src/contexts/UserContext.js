@@ -37,12 +37,14 @@ class UserContainer extends Container {
                     losses: 0,
                 },
             },
+            ship: 'Alpha',
             ...getPersistedUser()
         };
 
         this.updateUsername = this.updateUsername.bind(this)
         this.addSingleplayerMatch = this.addSingleplayerMatch.bind(this)
         this.addMultiplayerMatch = this.addMultiplayerMatch.bind(this)
+        this.updateAndPersistState = this.updateAndPersistState.bind(this)
         this.updateAndPersistState = this.updateAndPersistState.bind(this)
     }
 
@@ -81,13 +83,19 @@ class UserContainer extends Container {
                 state.matches.multiplayer.losses++;
         });
     }
+
+    updateShip(ship) {
+        this.updateAndPersistState(state => {
+            state.ship = ship;
+        });
+    }
 }
 
 export function UserConsumer(props) {
     return (
         <Subscribe to={[UserContainer]}>
             {user => (
-                React.cloneElement(props.children, { user })
+                Array.isArray(props.children) ? props.children.map(child => React.cloneElement(child, { user })) : React.cloneElement(props.children, { user })
             )}
         </Subscribe>
     )

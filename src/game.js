@@ -8,20 +8,20 @@ import { API_BASE_URL } from './config';
 import { HealthBehaviour } from './entities/components/healthBehaviour';
 import { getGame } from './helpers/game';
 
-export const initGame = (cancellationToken, username, matchId) => {
+export const initGame = (cancellationToken, username, ship, matchId) => {
     const game = getGame(matchId, cancellationToken, window.innerHeight, window.innerWidth);
 
     window.game = game;
 
-    game.player = new Player(game);
+    game.player = new Player(game, ship);
     game.player.username = username;
     game.player.addComponent(new PlayerSynchronizer(game.player, game));
     game.instantiateEntity(game.player);
 
     var simplerConnection = getHubConnection('simplermatchhub');
 
-    simplerConnection.on("ShipAddedtoGame", function (id, theUsername) {
-        var enemy = new EnemyPlayer(game);
+    simplerConnection.on("ShipAddedtoGame", function (id, theUsername, ship) {
+        var enemy = new EnemyPlayer(game, ship);
         enemy.username = theUsername;
         enemy.id = id;
         game.instantiateEntity(enemy);
@@ -78,7 +78,7 @@ export const initGame = (cancellationToken, username, matchId) => {
     simplerConnection.start().then(function () {
         console.log('connected')
         game.isConnected = true;
-        simplerConnection.invoke("AddShipToGame", game.matchId, game.player.id, username);
+        simplerConnection.invoke("AddShipToGame", game.matchId, game.player.id, username, ship);
     }).catch(function (err) {
         return console.error(err.toString());
     });
@@ -89,7 +89,7 @@ export const initGame = (cancellationToken, username, matchId) => {
 
     simplerConnection.onreconnected(connectionId => {
         game.isConnected = true;
-        simplerConnection.invoke("AddShipToGame", game.matchId, game.player.id, username);
+        simplerConnection.invoke("AddShipToGame", game.matchId, game.player.id, username, ship);
     });
 
     game.connection = simplerConnection;

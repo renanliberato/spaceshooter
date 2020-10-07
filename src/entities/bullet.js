@@ -39,7 +39,7 @@ export class Bullet extends GameObject {
                 if (this.isVisible)
                     AudioManager.play(AudioManager.audios.hit);
                 
-                ship.getHealth().takeDamage(1);
+                ship.getHealth().takeDamage(0.4);
                 hitAnyone = true;
             }
         });

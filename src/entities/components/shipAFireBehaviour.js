@@ -34,21 +34,27 @@ export class ShipAFireBehaviour extends GameObject
             angle: this.gameobject.angle
         });
 
-        const bullet = this.createBullet();
+        this.executeShoot();
+    }
 
-        this.gameobject.game.instantiateEntity(bullet);
+    executeShoot() {
+        const bullet1 = this.createBullet();
+        bullet1.moveAccordingToAngle('left', bullet1.angle, 10);
+        this.gameobject.game.instantiateEntity(bullet1);
+
+        const bullet2 = this.createBullet();
+        this.gameobject.game.instantiateEntity(bullet2);
+
+        const bullet3 = this.createBullet();
+        bullet3.moveAccordingToAngle('right', bullet3.angle, 10);
+        this.gameobject.game.instantiateEntity(bullet3);
         
         if (this.gameobject.isVisible)
             AudioManager.play(AudioManager.audios.shoot);
     }
 
     remoteFire(x, y, angle) {
-        const bullet = this.createBullet();
-
-        this.gameobject.game.instantiateEntity(bullet);
-        
-        if (this.gameobject.isVisible)
-            AudioManager.play(AudioManager.audios.shoot);
+        this.executeShoot();
     }
 
     createBullet() {

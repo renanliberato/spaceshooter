@@ -16,7 +16,7 @@ window.oncontextmenu = function(event) {
 
 
 const DesktopApp = () => {
-    const { currentScreen: { ScreenComponent, params }, navigateTo, navigateBack } = useNavigation(MainScreen);
+    const { currentScreen: { ScreenComponent, params }, navigateTo, navigateBack } = useNavigation(SinglePlayerGameScreen);
 
     return (
         <UserProvider>
@@ -32,7 +32,7 @@ const DesktopApp = () => {
 }
 
 const MobileApp = () => {
-    const { currentScreen: { ScreenComponent, params }, navigateTo, navigateBack } = useNavigation(MainScreen);
+    const { currentScreen: { ScreenComponent, params }, navigateTo, navigateBack } = useNavigation(SinglePlayerGameScreen);
 
     return (
         <UserProvider>

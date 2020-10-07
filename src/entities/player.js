@@ -1,9 +1,8 @@
 import { Ship } from './ship';
 import { FireBehaviour } from './components/fireBehaviour';
+import { ShipABehaviour } from './components/shipABehaviour';
 import { HealthBehaviour } from './components/healthBehaviour';
 import { isMobile } from '../config';
-import { loadImage } from 'canvas';
-import IMAGES from '../images/images';
 
 const keycode = require('keycode');
 
@@ -19,6 +18,7 @@ export class Player extends Ship {
         this.x = 100;
         this.y = 100;
 
+        this.addComponent(new ShipABehaviour(this, 'blue'));
         this.addComponent(new FireBehaviour(this, 0.5, this.game.sizeFromHeight(6), this.id+'bullet', 'enemy'));
 
         if (!isMobile) {
@@ -44,10 +44,6 @@ export class Player extends Ship {
                 }
             }))
         }
-
-        loadImage(IMAGES.ship_blue).then(image => {
-            this.shipImage = image;
-        });
     }
 
     onKeydown(e) {

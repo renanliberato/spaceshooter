@@ -1,21 +1,17 @@
 import { Ship } from './ship';
 import { FireBehaviour } from './components/fireBehaviour';
 import { HealthBehaviour } from './components/healthBehaviour';
-import { loadImage } from 'canvas';
-import IMAGES from '../images/images';
+import { ShipABehaviour } from './components/shipABehaviour';
 
 export class Enemy extends Ship {
     constructor(game) {
         super(game, 'red');
 
         this.tag = 'enemy';
+        this.addComponent(new ShipABehaviour(this, 'orange'));
         this.addComponent(new FireBehaviour(this, 0.5, this.game.sizeFromHeight(6), this.id+'bullet', 'player'));
         this.getComponent(HealthBehaviour).health = 1;
         this.getComponent(HealthBehaviour).maxHealth = 1;
-
-        loadImage(IMAGES.ship_orange).then(image => {
-            this.shipImage = image;
-        });
     }
 
     update() {

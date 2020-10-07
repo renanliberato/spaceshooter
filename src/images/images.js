@@ -11,6 +11,10 @@ const IMAGES = {
     playerShip2_damage1: require('./Damage/playerShip2_damage1.png'),
     playerShip2_damage2: require('./Damage/playerShip2_damage2.png'),
     playerShip2_damage3: require('./Damage/playerShip2_damage3.png'),
+    ufo_blue: require('./ufoBlue.png'),
+    ufo_green: require('./ufoGreen.png'),
+    ufo_red: require('./ufoRed.png'),
+    ufo_yellow: require('./ufoYellow.png'),
 }
 
 export default IMAGES;

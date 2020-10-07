@@ -50,6 +50,7 @@ export class Bullet extends GameObject {
     }
 
     render() {
+        super.render();
         const centerCoords = this.getCenterCanvasCoords();
         this.drawPolygon(
             centerCoords.x,

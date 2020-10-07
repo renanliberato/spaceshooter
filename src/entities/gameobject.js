@@ -1,4 +1,5 @@
 const uuid = require("uuid");
+import { createNanoEvents } from 'nanoevents';
 
 export class GameObject {
     constructor(game) {
@@ -18,6 +19,9 @@ export class GameObject {
         this.destroyAt = undefined;
         this.components = [];
         this.object = {rotate: () => {}};
+        this.disposables = [];
+
+        this.emitter = createNanoEvents();
     }
 
     addComponent(c) {
@@ -136,17 +140,18 @@ export class GameObject {
     }
 
     render() {
+        this.components.forEach(c => c.render());
     }
 
     destroy(reason) {
         this.game.destroyEntity(this);
         
-        if (this.onDestroy)
-            this.onDestroy();
+        this.onDestroy();
     }
     
     onDestroy() {
-        this.components.forEach(c => c.onDestroy && c.onDestroy())
+        this.components.forEach(c => c.onDestroy && c.onDestroy());
+        this.disposables.forEach(d => d());
     }
 
     drawPolygon(centerX, centerY, sideCount, size, strokeWidth, strokeColor, fillColor, rotationDegrees) {

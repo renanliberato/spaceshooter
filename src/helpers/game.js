@@ -18,6 +18,7 @@ export function getGame(matchId, cancellationToken, height, width) {
 
     const game = {
         paused: false,
+        dt: 0,
         time: 0,
         matchId: matchId,
         canvas: canvas,
@@ -33,6 +34,11 @@ export function getGame(matchId, cancellationToken, height, width) {
             width: 1000,
         },
         entities: [],
+        withEntityFromId: (id, action) => {
+            const entity = game.entities.find(e => e.id == id);
+            if (entity)
+                action(entity);
+        },
         instantiateEntity: (entity) => {
             game.entities.push(entity);
         },
@@ -59,6 +65,7 @@ export function getGame(matchId, cancellationToken, height, width) {
             var dt = (now - lastUpdate) / 1000; // toSeconds
             lastUpdate = now;
             game.time += dt;
+            game.dt = dt;
 
             game.visibleArea = {
                 x: game.player.x + game.player.width / 2 - width / 2,

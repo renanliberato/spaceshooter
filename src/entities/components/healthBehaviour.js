@@ -1,17 +1,27 @@
-import { Component } from './component'
+import { GameObject } from '../gameobject';
 
-export class HealthBehaviour extends Component
+export class HealthBehaviour extends GameObject
 {
-    constructor(gameobject, maxHealth) {
-        super(gameobject);
+    constructor(gameobject, game, maxHealth) {
+        super(game);
+        this.gameobject = gameobject;
+        this.lastHealth = maxHealth;
         this.health = maxHealth;
         this.maxHealth = maxHealth;
+
+        this.disposables.push(this.gameobject.emitter.on("TookDamage", this.onTookDamage.bind(this)));
     }
 
     update() {
+        super.update();
         if (this.health <= 0) {
             this.gameobject.destroy();
         }
+    }
+
+    onTookDamage({id, amount, health}) {
+        this.health = health;
+        this.onHealthChange(this.health, this.getPercent());
     }
 
     onHealthChange() {
@@ -19,13 +29,11 @@ export class HealthBehaviour extends Component
     }
 
     takeDamage(amount) {
-        this.health -= amount;
-
-        this.onHealthChange(this.health, this.getPercent());
-
-        if (this.health <= 0) {
-            this.gameobject.destroy();
-        }
+        this.gameobject.emitter.emit("TookDamage", {
+            id: this.gameobject.id,
+            amount,
+            health: this.health - amount
+        });
     }
 
     getPercent() {

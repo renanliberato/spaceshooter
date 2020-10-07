@@ -27,6 +27,7 @@ export class EnemyMark extends GameObject {
     }
 
     render() {
+        super.render();
         const centerCoords = this.getCenterCanvasCoords();
 
         this.drawPolygon(

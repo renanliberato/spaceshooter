@@ -27,7 +27,7 @@ export function GameScreenComponent({ navigateBack, navigateTo, matchId, user })
     React.useEffect(() => {
         const onPlayerDestroyed = (e) => {
             user.addMultiplayerMatch(false);
-            navigateTo(PostGameScreen, { result: 'player_destroyed' });
+            setTimeout(() => navigateTo(PostGameScreen, { result: 'player_destroyed' }), 2000);
         }
 
         const onGameStarted = (e) => {
@@ -55,7 +55,7 @@ export function GameScreenComponent({ navigateBack, navigateTo, matchId, user })
 
             if (e.detail.enemiesLeft == 0) {
                 user.addMultiplayerMatch(true);
-                navigateTo(PostGameScreen, { result: 'enemy_destroyed' })
+                setTimeout(() => navigateTo(PostGameScreen, { result: 'enemy_destroyed' }), 2000);
             }
         }
         document.addEventListener('game_started', onGameStarted);
@@ -64,7 +64,6 @@ export function GameScreenComponent({ navigateBack, navigateTo, matchId, user })
         document.addEventListener('player_health_updated', onHealthUpdate);
         document.addEventListener('enemy_destroyed', onEnemyDestroyed);
 
-        console.log(user.state.username);
         gameDisposer.current.dispose = initGame(
             cancellationTokenRef.current,
             user.state.username,

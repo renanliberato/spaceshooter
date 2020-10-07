@@ -2,7 +2,6 @@ import { GameObject } from './gameobject';
 import { AudioManager } from '../audios/AudioManager';
 import { Trail } from './trail';
 import { HealthBehaviour } from './components/healthBehaviour';
-import { createNanoEvents } from 'nanoevents';
 import { isMobile } from '../config';
 import IMAGES from '../images/images';
 
@@ -37,9 +36,7 @@ export class Ship extends GameObject {
         this.acceleratingFrontwards = false;
         this.acceleratingBackwards = false;
 
-        this.emitter = createNanoEvents();
-
-        this.addComponent(new HealthBehaviour(this, 10));
+        this.addComponent(new HealthBehaviour(this, this.game, 10));
     }
 
     getHealth() {
@@ -79,10 +76,6 @@ export class Ship extends GameObject {
     deaccelerateBackwards() {
         if (!this.acceleratingBackwards && this.dy < 0)
             this.dy += this.game.sizeFromHeight(this.accelerationForce);
-    }
-
-    onFire() {
-
     }
 
     dashLeft() {
@@ -163,10 +156,11 @@ export class Ship extends GameObject {
     }
 
     render() {
+        super.render();
         const centerCoords = this.getCenterCanvasCoords();
 
         if (this.shipImage)
-            this.drawImage(this.shipImage, centerCoords.x, centerCoords.y, 1, this.angle)
+            this.drawImage(this.shipImage, centerCoords.x, centerCoords.y, 0.5, this.angle)
 
         this.game.context.font = "12px Comic Sans MS";
         this.game.context.fillStyle = '#fff';

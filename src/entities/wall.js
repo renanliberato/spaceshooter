@@ -12,6 +12,7 @@ export class Wall extends GameObject {
     }
 
     render() {
+        super.render();
         const centerCoords = this.getCenterCanvasCoords();
         this.game.context.strokeStyle = this.color;
         this.game.context.fillStyle = 'transparent';

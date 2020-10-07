@@ -1,11 +1,12 @@
-import { Component } from './component';
+import { GameObject } from '../gameobject';
 import { AudioManager } from '../../audios/AudioManager';
 import { Bullet } from '../bullet';
 
-export class FireBehaviour extends Component
+export class FireBehaviour extends GameObject
 {
-    constructor(gameobject, firingSpeed, bulletSpeed, bulletTag, bulletTargetTag) {
-        super(gameobject);
+    constructor(gameobject, game, firingSpeed, bulletSpeed, bulletTag, bulletTargetTag) {
+        super(game);
+        this.gameobject = gameobject;
 
         this.isFiring = false;
         this.lastFireTime = 0;
@@ -16,6 +17,7 @@ export class FireBehaviour extends Component
     }
 
     update() {
+        super.update();
         if (!this.isFiring)
             return;
 
@@ -23,15 +25,21 @@ export class FireBehaviour extends Component
             return;
         }
         this.lastFireTime = this.gameobject.game.time;
+
+        this.gameobject.emitter.emit("FireShot", {
+            matchId: this.gameobject.game.matchId,
+            id: this.gameobject.id,
+            x: this.gameobject.x,
+            y: this.gameobject.y,
+            angle: this.gameobject.angle
+        });
+
         const bullet = this.createBullet();
 
         this.gameobject.game.instantiateEntity(bullet);
         
         if (this.gameobject.isVisible)
             AudioManager.play(AudioManager.audios.shoot);
-
-        if (this.gameobject.onFire)
-            this.gameobject.onFire();
     }
 
     remoteFire(x, y, angle) {

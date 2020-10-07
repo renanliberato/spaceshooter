@@ -29,9 +29,7 @@ export function SinglePlayerGameScreenComponent({ navigateBack, navigateTo, diff
 
     React.useEffect(() => {
         const onPlayerDestroyed = (e) => {
-            console.log('player_destroyed')
-            user.addSingleplayerMatch(difficulty, false);
-            navigateTo(PostGameScreen, { result: 'player_destroyed' });
+            setTimeout(() => navigateTo(PostGameScreen, { result: 'player_destroyed' }), 2000);
         }
 
         const onGameStarted = (e) => {
@@ -57,7 +55,7 @@ export function SinglePlayerGameScreenComponent({ navigateBack, navigateTo, diff
             if (e.detail.enemiesLeft == 0)
             {
                 user.addSingleplayerMatch(difficulty, true);
-                navigateTo(PostGameScreen, { result: 'enemy_destroyed' })
+                setTimeout(() => navigateTo(PostGameScreen, { result: 'enemy_destroyed' }), 2000);
             }
         }
 

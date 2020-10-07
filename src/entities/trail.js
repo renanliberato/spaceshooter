@@ -26,6 +26,7 @@ export class Trail extends GameObject
     }
 
     render() {
+        super.render();
         const centerCoords = this.getCenterCanvasCoords();
         this.drawPolygon(
             centerCoords.x,

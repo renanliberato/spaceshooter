@@ -8,14 +8,14 @@ export class Enemy extends Ship {
         super(game, 'red');
 
         this.tag = 'enemy';
-        this.addComponent(new ShipABehaviour(this, 'orange'));
-        this.addComponent(new FireBehaviour(this, 0.5, this.game.sizeFromHeight(6), this.id+'bullet', 'player'));
+        this.addComponent(new ShipABehaviour(this, this.game, 'orange', 'player'));
         this.getComponent(HealthBehaviour).health = 1;
         this.getComponent(HealthBehaviour).maxHealth = 1;
     }
 
     update() {
         super.update();
+        const fireBehaviour = this.getComponent(FireBehaviour);
 
         const players = this.game.entities.filter(e => e.tag == 'player');
         if (players.length == 0) {
@@ -26,9 +26,9 @@ export class Enemy extends Ship {
 
         const distanceFromPlayer = Math.abs((this.x - player.x + this.y - player.y) / 2);
 
-        const isFarFromPlayer = distanceFromPlayer > 120;
+        const isFarFromPlayer = distanceFromPlayer > 80;
 
-        this.getComponent(FireBehaviour).isFiring = false;
+        if (fireBehaviour) fireBehaviour.isFiring = false;
         this.acceleratingFrontwards = false;
         this.acceleratingBackwards = false;
         
@@ -40,7 +40,7 @@ export class Enemy extends Ship {
                 this.acceleratingFrontwards = true;
                 this.acceleratingBackwards = false;
             } else {
-                this.getComponent(FireBehaviour).isFiring = true;
+                if (fireBehaviour) fireBehaviour.isFiring = true;
             }
         }
     }

@@ -18,8 +18,7 @@ export class Player extends Ship {
         this.x = 100;
         this.y = 100;
 
-        this.addComponent(new ShipABehaviour(this, 'blue'));
-        this.addComponent(new FireBehaviour(this, 0.5, this.game.sizeFromHeight(6), this.id+'bullet', 'enemy'));
+        this.addComponent(new ShipABehaviour(this, this.game, 'blue', 'enemy'));
 
         if (!isMobile) {
 
@@ -111,16 +110,6 @@ export class Player extends Ship {
     onTouchend(e) {
         this.rotatingLeft = false;
         this.rotatingRight = false;
-    }
-
-    onFire() {
-        this.emitter.emit("FireShot", {
-            matchId: this.game.matchId,
-            id: this.id,
-            x: this.x,
-            y: this.y,
-            angle:this.angle
-        });
     }
 
     update() {

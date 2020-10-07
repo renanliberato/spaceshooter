@@ -16,7 +16,7 @@ export const initGame = (cancellationToken, username, matchId) => {
 
     game.player = new Player(game);
     game.player.username = username;
-    game.player.addComponent(new PlayerSynchronizer(game.player));
+    game.player.addComponent(new PlayerSynchronizer(game.player, game));
     game.instantiateEntity(game.player);
 
     var simplerConnection = getHubConnection('simplermatchhub');
@@ -63,6 +63,8 @@ export const initGame = (cancellationToken, username, matchId) => {
                 enemy.getHealth().health = health;
 
                 Object.keys(filteredProps).forEach(key => enemy[key] = filteredProps[key]);
+            case "TookDamage":
+                game.withEntityFromId(ev.id, (e) => e.onTookDamage(ev.id, ev.amount, ev.health))
         }
     })
 
@@ -92,6 +94,9 @@ export const initGame = (cancellationToken, username, matchId) => {
     });
 
     game.connection = simplerConnection;
+    game.connection.sendEventsToOtherPlayers = (eventName, ev) => {
+        game.connection.invoke("SendEventToOtherPlayers", game.matchId, {...ev, name: eventName});
+    };
 
     document.dispatchEvent(new CustomEvent('game_started', {
         detail: {

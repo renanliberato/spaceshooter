@@ -4,6 +4,7 @@ import { Trail } from './trail';
 import { HealthBehaviour } from './components/healthBehaviour';
 import { createNanoEvents } from 'nanoevents';
 import { isMobile } from '../config';
+import IMAGES from '../images/images';
 
 export class Ship extends GameObject {
     constructor(game, color) {
@@ -15,8 +16,8 @@ export class Ship extends GameObject {
         this.tag = 'ship';
         this.dx = 0;
         this.dy = 0;
-        this.width = 12.5;
-        this.height = 12.5;
+        this.width = 25;
+        this.height = 25;
         this.rotateSpeed = 4;
         this.accelerationForce = 0.04;
         this.dashForce = 4;
@@ -164,36 +165,8 @@ export class Ship extends GameObject {
     render() {
         const centerCoords = this.getCenterCanvasCoords();
 
-        this.drawPolygon(
-            centerCoords.x,
-            centerCoords.y,
-            3,
-            this.width,
-            1,
-            this.color,
-            this.color,
-            this.angle
-        );
-
-        const pointerCoords = this.getCoordsTowardsDirection(
-            centerCoords.x,
-            centerCoords.y,
-            'front',
-            this.angle,
-            this.width * 3 / 4
-        );
-        const pointerSize = this.width / 4;
-
-        this.drawPolygon(
-            pointerCoords.x,
-            pointerCoords.y,
-            3,
-            pointerSize,
-            1,
-            'red',
-            'red',
-            this.angle
-        );
+        if (this.shipImage)
+            this.drawImage(this.shipImage, centerCoords.x, centerCoords.y, 1, this.angle)
 
         this.game.context.font = "12px Comic Sans MS";
         this.game.context.fillStyle = '#fff';

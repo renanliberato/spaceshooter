@@ -15,7 +15,7 @@ export function MainScreen({ navigateTo }) {
             padding: 20,
         }}>
             <ProfileHeader />
-            <SinglePlayerGameMode />
+            <SinglePlayerGameMode navigateTo={navigateTo} />
             <MultiplayerPlayerGameMode navigateTo={navigateTo} />
             <strong style={{marginTop: 10}}>Controls</strong>
             {!isMobile && (

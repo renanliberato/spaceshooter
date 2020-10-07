@@ -2,6 +2,8 @@ import { Ship } from './ship';
 import { FireBehaviour } from './components/fireBehaviour';
 import { HealthBehaviour } from './components/healthBehaviour';
 import { isMobile } from '../config';
+import { loadImage } from 'canvas';
+import IMAGES from '../images/images';
 
 const keycode = require('keycode');
 
@@ -42,6 +44,10 @@ export class Player extends Ship {
                 }
             }))
         }
+
+        loadImage(IMAGES.ship_blue).then(image => {
+            this.shipImage = image;
+        });
     }
 
     onKeydown(e) {

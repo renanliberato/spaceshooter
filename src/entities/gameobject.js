@@ -186,4 +186,12 @@ export class GameObject {
             y: this.y - this.game.visibleArea.y,
         };
     }
+
+    drawImage(image, x, y, scale, rotation) {
+        this.game.context.save();
+        this.game.context.setTransform(scale, 0, 0, scale, x, y); // sets scale and origin
+        this.game.context.rotate(rotation * Math.PI / 180);
+        this.game.context.drawImage(image, -image.width / 2, -image.height / 2);
+        this.game.context.restore();
+    } 
 }

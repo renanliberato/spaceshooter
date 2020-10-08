@@ -1,5 +1,6 @@
 import React from 'react';
 import { GameScreen } from './GameScreen';
+import { UI_BASE_URL } from '../config';
 
 export function PostGameScreen({ result, navigateBack, navigateTo }) {
     return (
@@ -15,7 +16,7 @@ export function PostGameScreen({ result, navigateBack, navigateTo }) {
 
             }}>
                 <button style={{marginLeft: 5}} onClick={() => {
-                    window.history.replaceState("", "", '/');
+                    window.history.replaceState("", "", UI_BASE_URL);
                     navigateBack();
                     navigateBack();
                 }}>Return to main menu</button>

@@ -1,5 +1,6 @@
 import React from 'react';
 const keycode = require('keycode');
+import { UI_BASE_URL } from '../config';
 
 export function MatchMenu({ navigateBack }) {
     const [uiState, setUiState] = React.useState({
@@ -49,7 +50,7 @@ export function MatchMenu({ navigateBack }) {
             }}>
                 <h1 style={{ marginBottom: 20 }}>Menu</h1>
                 <button onClick={() => {
-                    window.history.replaceState("", "", '/');
+                    window.history.replaceState("", "", UI_BASE_URL);
                     navigateBack();
                 }}>Return to main menu</button>
             </div>

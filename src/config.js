@@ -5,3 +5,6 @@ export const API_BASE_URL = 'https://localhost:5001';
 
 export const maxViewHeight = isMobile ? '100%' : window.innerHeight;
 export const maxViewWidth = isMobile ? '100%' : maxViewHeight * 9 / 16;
+
+export const UI_BASE_URL = '/';
+//export const UI_BASE_URL = '/spaceshooter';

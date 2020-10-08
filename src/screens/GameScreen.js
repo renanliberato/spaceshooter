@@ -3,6 +3,7 @@ import { initGame } from '../game';
 import { PostGameScreen } from './PostGameScreen';
 import { UserConsumer } from '../contexts/UserContext';
 import { MatchMenu } from '../components/MatchMenu';
+import { UI_BASE_URL } from '../config';
 
 export function GameScreen(props) {
     return (
@@ -13,7 +14,7 @@ export function GameScreen(props) {
 }
 
 export function GameScreenComponent({ navigateBack, navigateTo, matchId, user }) {
-    window.history.replaceState("", "", '?matchid='+matchId);
+    window.history.replaceState("", "", `${UI_BASE_URL}?matchid=${matchId}`);
     const [uiState, setUiState] = React.useState({
         enemiesLeft: 0
     });

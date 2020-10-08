@@ -25,6 +25,11 @@ export class Player extends Ship {
         this.tag = 'player';
         this.x = 100;
         this.y = 100;
+        this.lastTouchLeft = 0;
+        this.lastTouchRight = 0;
+        this.touchDashTimeout = 0.3;
+        this.dashInterval = 5;
+        this.lastDashTime = 0;
 
         const Class = shipToClass[ship];
         this.addComponent(new Class(this, this.game, 'blue', 'enemy'));
@@ -70,10 +75,16 @@ export class Player extends Ship {
                 this.rotatingRight = true;
                 break;
             case 'q':
-                this.dashLeft();
+                if (this.game.time - this.lastDashTime > this.dashInterval) {
+                    this.dashLeft();
+                    this.lastDashTime = this.game.time;
+                }
                 break;
             case 'e':
-                this.dashRight();
+                if (this.game.time - this.lastDashTime > this.dashInterval) {
+                    this.dashRight();
+                    this.lastDashTime = this.game.time;
+                }
                 break;
             case 'space':
                 this.shipBehaviour.fireBehaviour.isFiring = true;
@@ -110,9 +121,25 @@ export class Player extends Ship {
         this.rotatingRight = false;
 
         if (clientX < leftSide) {
-            this.rotatingLeft = true;
+            if (this.game.time - this.lastTouchLeft < this.touchDashTimeout) {
+                if (this.game.time - this.lastDashTime > this.dashInterval) {
+                    this.dashLeft();
+                    this.lastDashTime = this.game.time;
+                }
+            } else {
+                this.rotatingLeft = true;
+            }
+            this.lastTouchLeft = this.game.time;
         } else if (clientX > rightSide) {
-            this.rotatingRight = true;
+            if (this.game.time - this.lastTouchRight < this.touchDashTimeout) {
+                if (this.game.time - this.lastDashTime > this.dashInterval) {
+                    this.dashRight();
+                    this.lastDashTime = this.game.time;
+                }
+            } else {
+                this.rotatingRight = true;
+            }
+            this.lastTouchRight = this.game.time;
         }
     }
 

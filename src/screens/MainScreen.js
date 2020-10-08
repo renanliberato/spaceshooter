@@ -59,6 +59,14 @@ export function MainScreen({ navigateTo }) {
                                 <td>Touch right side</td>
                                 <td>Move right</td>
                             </tr>
+                            <tr>
+                                <td>Touch twice left side</td>
+                                <td>Dash left</td>
+                            </tr>
+                            <tr>
+                                <td>Touch twice right side</td>
+                                <td>Dash right</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

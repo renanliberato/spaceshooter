@@ -19,7 +19,6 @@ export function ProfileNameHeaderComponent({ user }) {
         return (
             <div style={{
                 flexDirection: 'row',
-                alignSelf: 'flex-start',
                 alignItems: 'center'
             }}>
                 <span style={{marginRight: 20}}>Hello, {user.state.username}</span>
@@ -32,7 +31,6 @@ export function ProfileNameHeaderComponent({ user }) {
     return (
         <div style={{
             flexDirection: 'row',
-            alignSelf: 'flex-start',
             alignItems: 'center'
         }}>
             <input maxLength={13} style={{marginRight: 20, marginBottom: 0}} value={editingName} onChange={e => setEditingName(e.target.value)} />
@@ -52,7 +50,6 @@ export function ProfileShipHeaderComponent({ user }) {
         return (
             <div style={{
                 flexDirection: 'row',
-                alignSelf: 'flex-start',
                 alignItems: 'center'
             }}>
                 <span style={{marginRight: 20}}>Selected ship: {user.state.ship}</span>
@@ -65,7 +62,6 @@ export function ProfileShipHeaderComponent({ user }) {
     return (
         <div style={{
             flexDirection: 'row',
-            alignSelf: 'flex-start',
             alignItems: 'center'
         }}>
             <select style={{marginRight: 20}} value={selectingShip} onChange={e => setSelectingShip(e.target.value)}>

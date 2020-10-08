@@ -13,6 +13,7 @@ export function MainScreen({ navigateTo }) {
         <div style={{
             flex: 1,
             padding: 20,
+            alignSelf: 'center'
         }}>
             <ProfileHeader />
             <SinglePlayerGameMode navigateTo={navigateTo} />
@@ -41,6 +42,22 @@ export function MainScreen({ navigateTo }) {
                             <tr>
                                 <td>E</td>
                                 <td>Dash right</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            )}
+            {isMobile && (
+                <div>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Touch left side</td>
+                                <td>Move left</td>
+                            </tr>
+                            <tr>
+                                <td>Touch right side</td>
+                                <td>Move right</td>
                             </tr>
                         </tbody>
                     </table>

@@ -20,6 +20,7 @@ export class Player extends Ship {
         this.onKeydown = this.onKeydown.bind(this);
         this.onKeyup = this.onKeyup.bind(this);
         this.onTouchstart = this.onTouchstart.bind(this);
+        this.onTouchend = this.onTouchend.bind(this);
 
         this.tag = 'player';
         this.x = 100;
@@ -36,8 +37,6 @@ export class Player extends Ship {
         } else {
             this.shipBehaviour.fireBehaviour.isFiring = true;
             this.acceleratingFrontwards = true;
-            const leftSide = window.innerWidth / 3;
-            const rightSide = window.innerWidth * 2 / 3;
 
             document.addEventListener('touchstart', this.onTouchstart);
 
@@ -104,6 +103,8 @@ export class Player extends Ship {
 
     onTouchstart(e) {
         var clientX = e.touches[0].clientX;
+        const leftSide = window.innerWidth / 3;
+        const rightSide = window.innerWidth * 2 / 3;
 
         this.rotatingLeft = false;
         this.rotatingRight = false;

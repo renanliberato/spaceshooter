@@ -1,6 +1,6 @@
 import React from 'react';
 import { initGame } from '../game';
-import { PostGameScreen } from './PostGameScreen';
+import { GameEndBehaviour } from '../components/GameEndBehaviour';
 import { UserConsumer } from '../contexts/UserContext';
 import { GameUI } from '../components/GameUI';
 import { UI_BASE_URL } from '../config';
@@ -22,21 +22,15 @@ export function GameScreenComponent({ navigateBack, navigateTo, matchId, user })
     const gameDisposer = React.useRef({dispose: () => {}});
     const gameContainerRef = React.useRef(null);
 
+    const onLose = () => {
+        user.addMultiplayerMatch(false);
+    };
+
+    const onWin = () => {
+        user.addMultiplayerMatch(true);
+    };
+
     React.useEffect(() => {
-        const onPlayerDestroyed = (e) => {
-            user.addMultiplayerMatch(false);
-            setTimeout(() => navigateTo(PostGameScreen, { result: 'player_destroyed' }), 2000);
-        }
-
-        const onEnemyDestroyed = (e) => {
-            if (e.detail.enemiesLeft == 0) {
-                user.addMultiplayerMatch(true);
-                setTimeout(() => navigateTo(PostGameScreen, { result: 'enemy_destroyed' }), 2000);
-            }
-        }
-        document.addEventListener('player_destroyed', onPlayerDestroyed);
-        document.addEventListener('enemy_destroyed', onEnemyDestroyed);
-
         gameDisposer.current.dispose = initGame(
             cancellationTokenRef.current,
             user.state.username,
@@ -45,8 +39,6 @@ export function GameScreenComponent({ navigateBack, navigateTo, matchId, user })
         );
 
         return () => {
-            document.removeEventListener('player_destroyed', onPlayerDestroyed);
-            document.removeEventListener('enemy_destroyed', onEnemyDestroyed);
             cancellationTokenRef.current.isCancelled = true;
             gameDisposer.current.dispose();
         };
@@ -65,6 +57,7 @@ export function GameScreenComponent({ navigateBack, navigateTo, matchId, user })
                     <GameUI navigateBack={navigateBack} />
                 </div>
             </div>
+            <GameEndBehaviour onLose={onLose} onWin={onWin} navigateTo={navigateTo} navigateBack={navigateBack} />
         </>
     );
 }

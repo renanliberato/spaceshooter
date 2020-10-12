@@ -1,6 +1,6 @@
 import React from 'react';
 import { initSinglePlayerGame } from '../singleplayergame';
-import { PostGameScreen } from './PostGameScreen';
+import { GameEndBehaviour } from '../components/GameEndBehaviour';
 import { UserConsumer } from '../contexts/UserContext';
 import { GameUI } from '../components/GameUI';
 const keycode = require('keycode');
@@ -21,23 +21,15 @@ export function SinglePlayerGameScreenComponent({ navigateBack, navigateTo, diff
     const gameDisposer = React.useRef({dispose: () => {}});
     const gameContainerRef = React.useRef(null);
 
+    const onLose = () => {
+        user.addSingleplayerMatch(difficulty, false);
+    };
+
+    const onWin = () => {
+        user.addSingleplayerMatch(difficulty, true);
+    };
+
     React.useEffect(() => {
-        const onPlayerDestroyed = (e) => {
-            user.addSingleplayerMatch(difficulty, false);
-            setTimeout(() => navigateTo(PostGameScreen, { result: 'player_destroyed' }), 2000);
-        }
-
-        const onEnemyDestroyed = (e) => {
-            if (e.detail.enemiesLeft == 0)
-            {
-                user.addSingleplayerMatch(difficulty, true);
-                setTimeout(() => navigateTo(PostGameScreen, { result: 'enemy_destroyed' }), 2000);
-            }
-        }
-
-        document.addEventListener('player_destroyed', onPlayerDestroyed);
-        document.addEventListener('enemy_destroyed', onEnemyDestroyed);
-
         const height = Math.min(gameContainerRef.current.offsetHeight, window.innerHeight);
         gameDisposer.current.dispose = initSinglePlayerGame(
             cancellationTokenRef.current,
@@ -47,8 +39,6 @@ export function SinglePlayerGameScreenComponent({ navigateBack, navigateTo, diff
         );
 
         return () => {
-            document.removeEventListener('player_destroyed', onPlayerDestroyed);
-            document.removeEventListener('enemy_destroyed', onEnemyDestroyed);
             cancellationTokenRef.current.isCancelled = true;
             gameDisposer.current.dispose();
         };
@@ -67,6 +57,7 @@ export function SinglePlayerGameScreenComponent({ navigateBack, navigateTo, diff
                     <GameUI navigateBack={navigateBack} />
                 </div>
             </div>
+            <GameEndBehaviour onWin={onWin} onLose={onLose} navigateTo={navigateTo} navigateBack={navigateBack} />
         </>
     );
 }

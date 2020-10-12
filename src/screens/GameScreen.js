@@ -2,7 +2,7 @@ import React from 'react';
 import { initGame } from '../game';
 import { PostGameScreen } from './PostGameScreen';
 import { UserConsumer } from '../contexts/UserContext';
-import { MatchMenu } from '../components/MatchMenu';
+import { GameUI } from '../components/GameUI';
 import { UI_BASE_URL } from '../config';
 
 export function GameScreen(props) {
@@ -15,9 +15,6 @@ export function GameScreen(props) {
 
 export function GameScreenComponent({ navigateBack, navigateTo, matchId, user }) {
     window.history.replaceState("", "", `${UI_BASE_URL}?matchid=${matchId}`);
-    const [uiState, setUiState] = React.useState({
-        enemiesLeft: 0
-    });
 
     const cancellationTokenRef = React.useRef({
         isCancelled: false
@@ -31,38 +28,13 @@ export function GameScreenComponent({ navigateBack, navigateTo, matchId, user })
             setTimeout(() => navigateTo(PostGameScreen, { result: 'player_destroyed' }), 2000);
         }
 
-        const onGameStarted = (e) => {
-            setUiState({
-                enemiesLeft: e.detail.enemies
-            })
-        }
-
-        const onPlayerEntered = (e) => {
-            setUiState(state => ({
-                enemiesLeft: ++state.enemiesLeft
-            }))
-        }
-
-        const onHealthUpdate = (e) => {
-            setUiState({
-                health: e.detail.health
-            })
-        }
-
         const onEnemyDestroyed = (e) => {
-            setUiState({
-                enemiesLeft: e.detail.enemiesLeft
-            });
-
             if (e.detail.enemiesLeft == 0) {
                 user.addMultiplayerMatch(true);
                 setTimeout(() => navigateTo(PostGameScreen, { result: 'enemy_destroyed' }), 2000);
             }
         }
-        document.addEventListener('game_started', onGameStarted);
-        document.addEventListener('player_entered', onPlayerEntered);
         document.addEventListener('player_destroyed', onPlayerDestroyed);
-        document.addEventListener('player_health_updated', onHealthUpdate);
         document.addEventListener('enemy_destroyed', onEnemyDestroyed);
 
         gameDisposer.current.dispose = initGame(
@@ -73,10 +45,7 @@ export function GameScreenComponent({ navigateBack, navigateTo, matchId, user })
         );
 
         return () => {
-            document.removeEventListener('game_started', onGameStarted);
-            document.removeEventListener('player_entered', onPlayerEntered);
             document.removeEventListener('player_destroyed', onPlayerDestroyed);
-            document.removeEventListener('player_health_updated', onHealthUpdate);
             document.removeEventListener('enemy_destroyed', onEnemyDestroyed);
             cancellationTokenRef.current.isCancelled = true;
             gameDisposer.current.dispose();
@@ -93,29 +62,7 @@ export function GameScreenComponent({ navigateBack, navigateTo, matchId, user })
                     position: 'relative'
                 }}>
                     <canvas id="arena"></canvas>
-                    <div style={{
-                        position: 'absolute',
-                        top: 10,
-                        left: 10,
-                    }}>
-                        <p style={{
-                            color: 'white'
-                        }}>Enemies: {uiState.enemiesLeft}</p>
-                    </div>
-                    <div style={{
-                        position: 'absolute',
-                        bottom: 10,
-                        left: 10,
-                        right: 10,
-                        display: 'flex',
-                    }}>
-                        <div style={{
-                            height: 20,
-                            width: `${uiState.health}%`,
-                            backgroundColor: 'red'
-                        }}></div>
-                    </div>
-                    <MatchMenu navigateBack={navigateBack} />
+                    <GameUI navigateBack={navigateBack} />
                 </div>
             </div>
         </>

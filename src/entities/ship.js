@@ -52,11 +52,13 @@ export class Ship extends GameObject {
         var t = new Trail(this.game, this);
         t.destroyAfter(this.trailSpeed * 4);
         t.moveAccordingToAngle('left', this.angle, this.game.sizeFromWidth(1));
+        t.moveAccordingToAngle('front', this.angle, this.height * -1);
         this.game.instantiateEntity(t);
         
         var t = new Trail(this.game, this);
         t.destroyAfter(this.trailSpeed * 4);
         t.moveAccordingToAngle('right', this.angle, this.game.sizeFromWidth(1));
+        t.moveAccordingToAngle('front', this.angle, this.height * -1);
         this.game.instantiateEntity(t);
     }
 

@@ -11,8 +11,6 @@ export class Trail extends GameObject
         this.dx = this.owner.dx;
         this.distantiationSpeed = 0;
         this.rotateToAngle(this.owner.angle);
-
-        this.moveAccordingToAngle('front', this.owner.angle, this.owner.height * -1);
     }
 
     update() {

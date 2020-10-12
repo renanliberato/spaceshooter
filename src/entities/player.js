@@ -1,4 +1,5 @@
 import { Ship } from './ship';
+import { Trail } from './trail';
 import { ShipABehaviour } from './components/shipABehaviour';
 import { ShipBBehaviour } from './components/shipBBehaviour';
 import { ShipCBehaviour } from './components/shipCBehaviour';
@@ -30,6 +31,7 @@ export class Player extends Ship {
         this.touchDashTimeout = 0.3;
         this.dashInterval = 5;
         this.lastDashTime = 0;
+        this.lastDashTrailTime = 0;
 
         const Class = shipToClass[ship];
         this.addComponent(new Class(this, this.game, 'blue', 'enemy'));
@@ -75,13 +77,13 @@ export class Player extends Ship {
                 this.rotatingRight = true;
                 break;
             case 'q':
-                if (this.game.time - this.lastDashTime > this.dashInterval) {
+                if (this.canDash()) {
                     this.dashLeft();
                     this.lastDashTime = this.game.time;
                 }
                 break;
             case 'e':
-                if (this.game.time - this.lastDashTime > this.dashInterval) {
+                if (this.canDash()) {
                     this.dashRight();
                     this.lastDashTime = this.game.time;
                 }
@@ -91,6 +93,10 @@ export class Player extends Ship {
                 break;
 
         }
+    }
+
+    canDash() {
+        return this.lastDashTime == 0 || this.game.time - this.lastDashTime > this.dashInterval;
     }
 
     onKeyup(e) {
@@ -122,7 +128,7 @@ export class Player extends Ship {
 
         if (clientX < leftSide) {
             if (this.game.time - this.lastTouchLeft < this.touchDashTimeout) {
-                if (this.game.time - this.lastDashTime > this.dashInterval) {
+                if (this.canDash()) {
                     this.dashLeft();
                     this.lastDashTime = this.game.time;
                 }
@@ -132,7 +138,7 @@ export class Player extends Ship {
             this.lastTouchLeft = this.game.time;
         } else if (clientX > rightSide) {
             if (this.game.time - this.lastTouchRight < this.touchDashTimeout) {
-                if (this.game.time - this.lastDashTime > this.dashInterval) {
+                if (this.canDash()) {
                     this.dashRight();
                     this.lastDashTime = this.game.time;
                 }
@@ -150,6 +156,44 @@ export class Player extends Ship {
 
     update() {
         super.update();
+    }
+
+    render() {
+        super.render();
+        this.createDashTrail();
+    }
+
+    createDashTrail() {
+        if (this.game.time - this.lastDashTrailTime <= this.trailSpeed) {
+            return;
+        }
+        this.lastDashTrailTime = this.game.time;
+        
+        if (this.canDash()) {
+            var t = new Trail(this.game, this);
+            t.destroyAfter(0.01 * 4);
+            t.moveAccordingToAngle('left', this.angle, this.width + this.game.sizeFromWidth(1));
+            this.game.instantiateEntity(t);
+
+            var t = new Trail(this.game, this);
+            t.destroyAfter(0.01 * 4);
+            t.moveAccordingToAngle('right', this.angle, this.width + this.game.sizeFromWidth(1));
+            this.game.instantiateEntity(t);
+        }
+
+        if (this.dx < 0) {
+            var t = new Trail(this.game, this);
+            t.destroyAfter(this.trailSpeed * 4);
+            t.moveAccordingToAngle('left', this.angle, this.width + this.game.sizeFromWidth(1));
+            this.game.instantiateEntity(t);
+        }
+        
+        if (this.dx > 0) {
+            var t = new Trail(this.game, this);
+            t.destroyAfter(this.trailSpeed * 4);
+            t.moveAccordingToAngle('right', this.angle, this.width + this.game.sizeFromWidth(1));
+            this.game.instantiateEntity(t);
+        }
     }
 
     onDestroy() {

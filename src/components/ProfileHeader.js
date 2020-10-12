@@ -64,7 +64,7 @@ export function ProfileShipHeaderComponent({ user }) {
             flexDirection: 'row',
             alignItems: 'center'
         }}>
-            <select style={{marginRight: 20}} value={selectingShip} onChange={e => setSelectingShip(e.target.value)}>
+            <select style={{marginRight: 20, flex: 1}} value={selectingShip} onChange={e => setSelectingShip(e.target.value)}>
                 <option value='Alpha'>Alpha</option>
                 <option value='Beta'>Beta</option>
                 <option value='Ovni'>Ovni</option>

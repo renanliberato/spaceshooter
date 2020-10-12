@@ -23,6 +23,7 @@ export function SinglePlayerGameScreenComponent({ navigateBack, navigateTo, diff
 
     React.useEffect(() => {
         const onPlayerDestroyed = (e) => {
+            user.addSingleplayerMatch(difficulty, false);
             setTimeout(() => navigateTo(PostGameScreen, { result: 'player_destroyed' }), 2000);
         }
 

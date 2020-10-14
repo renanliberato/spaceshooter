@@ -17,7 +17,8 @@ export function ProfileNameHeaderComponent({ user }) {
     const [selectingShip, setSelectingShip] = React.useState('shipA');
 
     React.useEffect(() => {
-        EventsService.sendUserData(user.state);
+        if (user.state.deviceid != '')
+            EventsService.sendUserData(user.state);
     }, []);
 
     if (editingName === false)

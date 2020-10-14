@@ -1,3 +1,4 @@
+const uuid = require('uuid');
 import React from 'react';
 import { Provider, Subscribe, Container } from 'unstated';
 
@@ -16,6 +17,7 @@ class UserContainer extends Container {
     constructor() {
         super();
         this.state = {
+            deviceid: uuid.v4(),
             username: '',
             matches: {
                 singleplayer: {
@@ -44,7 +46,6 @@ class UserContainer extends Container {
         this.updateUsername = this.updateUsername.bind(this)
         this.addSingleplayerMatch = this.addSingleplayerMatch.bind(this)
         this.addMultiplayerMatch = this.addMultiplayerMatch.bind(this)
-        this.updateAndPersistState = this.updateAndPersistState.bind(this)
         this.updateAndPersistState = this.updateAndPersistState.bind(this)
     }
 

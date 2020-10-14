@@ -23,6 +23,7 @@ export function MainScreenComponent({ user, navigateTo }) {
 
     React.useEffect(() => {
         EventsService.getAggregatedUserData().then(data => setAggregatedUserData(data));
+        user.updateUsername(user.state.username);
     }, []);
 
     const rankingMapper = {

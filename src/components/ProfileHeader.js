@@ -1,5 +1,6 @@
 import React from 'react';
 import { UserConsumer } from '../contexts/UserContext';
+import { EventsService } from '../services/api';
 
 export function ProfileHeader(props) {
     return (
@@ -14,6 +15,10 @@ export function ProfileHeader(props) {
 export function ProfileNameHeaderComponent({ user }) {
     const [editingName, setEditingName] = React.useState(false);
     const [selectingShip, setSelectingShip] = React.useState('shipA');
+
+    React.useEffect(() => {
+        EventsService.sendUserData(user.state);
+    }, []);
 
     if (editingName === false)
         return (

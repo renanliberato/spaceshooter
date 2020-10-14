@@ -1,7 +1,7 @@
 import React from 'react';
 import { GameScreen } from '../screens/GameScreen';
 import { API_BASE_URL } from '../config';
-import { UserConsumer } from '../contexts/UserContext'
+import { UserConsumer } from '../contexts/UserContext';
 
 export function MultiplayerPlayerGameMode(props) {
     return (

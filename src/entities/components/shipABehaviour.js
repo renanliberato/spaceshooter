@@ -1,113 +1,12 @@
-import { GameObject } from '../gameobject';
-import { HealthBehaviour } from './healthBehaviour';
 import { ShipAFireBehaviour } from './shipAFireBehaviour';
-import { loadImage } from 'canvas';
 import IMAGES from '../../images/images';
+import { ShipBehaviour } from './shipBehaviour';
 
-export class ShipABehaviour extends GameObject {
+export class ShipABehaviour extends ShipBehaviour {
     constructor(gameobject, game, color, enemytag) {
-        super(game);
-        this.gameobject = gameobject;
+        super(gameobject, game, IMAGES[`playerShip2_${color}`], IMAGES[`playerShip2_damage1`], IMAGES[`playerShip2_damage2`], IMAGES[`playerShip2_damage3`]);
 
         this.addComponent(new ShipAFireBehaviour(this.gameobject, this.game, 0.5, 12, this.gameobject.id+'bullet', enemytag));
         this.fireBehaviour = this.getComponent(ShipAFireBehaviour);
-        this.gameobject.shipBehaviour = this;
-
-        loadImage(IMAGES[`playerShip2_${color}`]).then(image => {
-            this.gameobject.shipImage = image;
-        });
-
-        this.damageImages = []
-        loadImage(IMAGES[`playerShip2_damage1`]).then(image => {
-            this.damageImage1 = image;
-        });
-        loadImage(IMAGES[`playerShip2_damage2`]).then(image => {
-            this.damageImage2 = image;
-        });
-        loadImage(IMAGES[`playerShip2_damage3`]).then(image => {
-            this.damageImage3 = image;
-        });
-
-        this.disposables.push(
-            this.gameobject.emitter.on("TookDamage", ({id, amount, health}) => {
-                if (this.gameobject.id == id) {
-                    this.startDamageAnimation();
-                }
-            })
-        );
-    }
-
-    startDamageAnimation() {
-        const healthBehaviour = this.gameobject.getComponent(HealthBehaviour);
-        const healthPercent = healthBehaviour.getPercent();
-
-        if (healthPercent == 0 && this.damageImage3) {
-            [1,2,3,4,5,6,7,8,9,10].forEach(k => {
-                const damageAnimation = new ShipADamageAnimation(this.game);
-                damageAnimation.image = this.damageImage3;
-
-                damageAnimation.x = this.gameobject.x;
-                damageAnimation.y = this.gameobject.y;
-
-                this.game.instantiateEntity(damageAnimation);
-            })
-            return;
-        }
-
-        if (healthPercent <= 0.3 && this.damageImage3) {
-            const damageAnimation = new ShipADamageAnimation(this.game);
-            damageAnimation.image = this.damageImage3;
-
-            damageAnimation.x = this.gameobject.x;
-            damageAnimation.y = this.gameobject.y;
-
-            this.game.instantiateEntity(damageAnimation);
-            return;
-        }
-
-        if (healthPercent <= 0.6 && this.damageImage2) {
-            const damageAnimation = new ShipADamageAnimation(this.game);
-            damageAnimation.image = this.damageImage2;
-
-            damageAnimation.x = this.gameobject.x;
-            damageAnimation.y = this.gameobject.y;
-
-            this.game.instantiateEntity(damageAnimation);
-            return;
-        }
-
-        if (this.damageImage1) {
-            const damageAnimation = new ShipADamageAnimation(this.game);
-            damageAnimation.image = this.damageImage1;
-
-            damageAnimation.x = this.gameobject.x;
-            damageAnimation.y = this.gameobject.y;
-
-            this.game.instantiateEntity(damageAnimation);
-            return;
-        }
-    }
-}
-
-export class ShipADamageAnimation extends GameObject {
-    constructor(game) {
-        super(game);
-        this.image = null;
-        this.dy = Math.random() * 4;
-        this.angle = Math.random() * 360;
-        this.destroyAfter(1);
-    }
-
-    update() {
-        super.update();
-        if (this.dy > 0)
-            this.dy -= 0.1
-        this.moveAccordingToAngle('front', this.angle, this.dy);
-    }
-
-    render() {
-        super.render();
-        const center = this.getCenterCanvasCoords();
-        this.drawImage(this.image, center.x, center.y, 0.5, this.angle);
     }
 }

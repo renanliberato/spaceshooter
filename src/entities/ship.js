@@ -161,9 +161,6 @@ export class Ship extends GameObject {
         super.render();
         const centerCoords = this.getCenterCanvasCoords();
 
-        if (this.shipImage)
-            this.drawImage(this.shipImage, centerCoords.x, centerCoords.y, 0.5, this.angle)
-
         this.game.context.font = "12px Comic Sans MS";
         this.game.context.fillStyle = '#fff';
         this.game.context.fillText(this.username, centerCoords.x - (this.username.length * 3), centerCoords.y - this.width - 10);

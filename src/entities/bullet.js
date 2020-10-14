@@ -1,7 +1,8 @@
 import { GameObject } from './gameobject';
 import { AudioManager } from '../audios/AudioManager';
-import { HealthBehaviour } from './components/HealthBehaviour';
 import { collides } from '../helpers';
+import { ImageRendererBehaviour } from './components/imageRendererBehaviour';
+import IMAGES from '../images/images';
 
 export class Bullet extends GameObject {
     constructor(game, tag, owner, targetTag, speed) {
@@ -19,6 +20,8 @@ export class Bullet extends GameObject {
         this.height = 10;
 
         this.rotateToAngle(this.owner.angle);
+
+        this.addComponent(new ImageRendererBehaviour(this, this.game, IMAGES.laser_blue, 0.5))
 
         setTimeout(() => {
             if (!this.destroyed) {
@@ -47,19 +50,5 @@ export class Bullet extends GameObject {
         if (hitAnyone) {
             this.destroy('bullet hit anyone');
         }
-    }
-
-    render() {
-        super.render();
-        const centerCoords = this.getCenterCanvasCoords();
-        this.drawPolygon(
-            centerCoords.x,
-            centerCoords.y,
-            2,
-            this.height,
-            this.width,
-            this.owner.color,
-            this.owner.color,
-            this.angle)
     }
 }

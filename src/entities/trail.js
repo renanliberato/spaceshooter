@@ -1,22 +1,35 @@
 import { GameObject } from "./gameobject";
+import { TransformBehaviour } from "./components/transformBehaviour";
 
 export class Trail extends GameObject
 {
     constructor(game, owner) {
         super(game);
         this.owner = owner;
-        this.x = this.owner.x;
-        this.y = this.owner.y;
-        this.dy = this.owner.dy;
-        this.dx = this.owner.dx;
+        
+        this.addComponent(new TransformBehaviour(game));
+
+        this.getComponent(TransformBehaviour, transform => {
+            this.owner.getComponent(TransformBehaviour, ownerTransform => {
+                transform.x = ownerTransform.x;
+                transform.y = ownerTransform.y;
+                transform.dy = ownerTransform.dy;
+                transform.dx = ownerTransform.dx;
+                transform.rotateToAngle(ownerTransform.angle);
+            });
+        });
+
         this.distantiationSpeed = 0;
-        this.rotateToAngle(this.owner.angle);
     }
 
     update() {
         super.update();
-        this.dy = this.owner.dy;
-        this.dx = this.owner.dx;
+        this.getComponent(TransformBehaviour, transform => {
+            this.owner.getComponent(TransformBehaviour, ownerTransform => {
+                transform.dy = ownerTransform.dy;
+                transform.dx = ownerTransform.dx;
+            });
+        });
 
         if (this.game.time > this.destroyAt) {
             this.destroy();
@@ -25,16 +38,18 @@ export class Trail extends GameObject
 
     render() {
         super.render();
-        const centerCoords = this.getCenterCanvasCoords();
-        this.drawPolygon(
-            centerCoords.x,
-            centerCoords.y,
-            4,
-            2,
-            1,
-            this.owner.color,
-            this.owner.color,
-            this.angle
-        );
+        this.getComponent(TransformBehaviour, transform => {
+            const centerCoords = transform.getCenterCanvasCoords();
+            this.drawPolygon(
+                centerCoords.x,
+                centerCoords.y,
+                4,
+                2,
+                1,
+                this.owner.color,
+                this.owner.color,
+                transform.angle
+            );
+        });
     }
 }

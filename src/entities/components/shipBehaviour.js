@@ -9,12 +9,13 @@ export class ShipBehaviour extends GameObject {
         this.gameobject.shipBehaviour = this;
 
         this.addComponent(new ImageRendererBehaviour(this.gameobject, this.game, image, 0.5));
-        this.addComponent(new ShipDamageAnimationBehaviour(this.gameobject, this.game, dmgimage1, dmgimage2, dmgimage3));
+        const dmgAnimationBehaviour = new ShipDamageAnimationBehaviour(this.gameobject, this.game, dmgimage1, dmgimage2, dmgimage3);
+        this.addComponent(dmgAnimationBehaviour);
 
         this.disposables.push(
             this.gameobject.emitter.on("TookDamage", ({id, amount, health}) => {
                 if (this.gameobject.id == id) {
-                    this.getComponent(ShipDamageAnimationBehaviour).startDamageAnimation();
+                    dmgAnimationBehaviour.startDamageAnimation();
                 }
             })
         );

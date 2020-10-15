@@ -1,14 +1,19 @@
 import { GameObject } from "./gameobject";
+import { TransformBehaviour } from "./components/transformBehaviour";
 
 export class EnemyMark extends GameObject {
     constructor(game, owner, enemy) {
         super(game);
         this.tag = 'enemymark';
-        this.width = 3;
-        this.height = 3;
         this.color = 'red';
         this.owner = owner;
         this.enemy = enemy;
+
+        this.addComponent(new TransformBehaviour(this.game));
+        this.getComponent(TransformBehaviour, transform => {
+            transform.width = 3;
+            transform.height = 3;
+        });
     }
 
     update() {
@@ -19,26 +24,33 @@ export class EnemyMark extends GameObject {
             return;
         }
 
-        this.moveTo(this.owner.x, this.owner.y);
+        this.getComponent(TransformBehaviour, transform => {
+            this.owner.getComponent(TransformBehaviour, ownerTransform => {
 
-        var angle = this.owner.getAngleTowardsObject(this.enemy);
-        this.angle = angle;
-        this.moveAccordingToAngle('front', angle, this.owner.width + 25);
+                transform.moveTo(ownerTransform.x, ownerTransform.y);
+                var angle = ownerTransform.getAngleTowardsObject(this.enemy.getComponent(TransformBehaviour));
+                transform.angle = angle;
+
+                transform.moveAccordingToAngle('front', angle, ownerTransform.width + 25);
+            })
+        });
     }
 
     render() {
         super.render();
-        const centerCoords = this.getCenterCanvasCoords();
+        this.getComponent(TransformBehaviour, transform => {
+            const centerCoords = transform.getCenterCanvasCoords();
 
-        this.drawPolygon(
-            centerCoords.x,
-            centerCoords.y,
-            3,
-            this.width,
-            1,
-            this.color,
-            this.color,
-            this.angle
-        );
+            this.drawPolygon(
+                centerCoords.x,
+                centerCoords.y,
+                3,
+                transform.width,
+                1,
+                this.color,
+                this.color,
+                transform.angle
+            );
+        });
     }
 }

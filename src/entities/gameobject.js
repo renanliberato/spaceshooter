@@ -7,118 +7,35 @@ export class GameObject {
         this.createdAt = game.time;
         this.tag = 'gameobject';
         this.game = game;
-        this.angle = 0;
-        this.x = 0;
-        this.y = 0;
-        this.dx = 0;
-        this.dy = 0;
-        this.width = 0;
-        this.height = 0;
         this.destroyed = false;
-        this.isVisible = false;
         this.destroyAt = undefined;
-        this.components = [];
-        this.object = {rotate: () => {}};
+        this.components = {};
+        this.componentKeys = [];
         this.disposables = [];
 
         this.emitter = createNanoEvents();
     }
 
     addComponent(c) {
-        this.components.push(c);
+        this.components[c.constructor] = c;
+        this.componentKeys.push(c.constructor);
     }
 
-    getComponent(theClass) {
-        return this.components.find(c => c.constructor.name == theClass.name);
+    getComponent(theClass, doThis) {
+        const component = this.components[theClass];
+        if (!doThis)
+            return component;
+
+        if (component)
+            doThis(component);
     }
 
     start() {
-        this.components.forEach(c => c.start());
+        this.componentKeys.forEach(key => this.components[key].start());
     }
 
     setObject(obj) {
         this.object = obj;
-    }
-
-    move(x, y) {
-        this.moveTo(this.x + x, this.y + y)
-    }
-
-    moveTo(x, y) {
-        this.x = Math.min(this.game.map.width, Math.max(0, x));
-        this.y = Math.min(this.game.map.height, Math.max(0, y));
-    }
-
-    rotateAngle(dAngle) {
-        this.angle = this.angle + dAngle;
-        this.object.rotate(this.angle);
-    }
-
-    rotateToAngle(angle) {
-        this.angle = angle;
-        this.object.rotate(this.angle);
-    }
-
-    getAngleTowardsObject(obj) {
-        return (Math.atan2(obj.y - this.y, obj.x - this.x) * 180 / Math.PI) + 90;
-    }
-
-    moveAccordingToAngle(direction, angle, speed) {
-        switch (direction) {
-            case 'front':
-                this.move(
-                    speed * Math.sin(angle * Math.PI / 180),
-                    speed * Math.cos(angle * Math.PI / 180) * -1
-                );
-                break;
-            case 'back':
-                this.move(
-                    speed * Math.cos(angle * Math.PI / 180),
-                    speed * Math.sin(angle * Math.PI / 180)
-                );
-                break;
-            case 'left':
-                this.move(
-                    speed * Math.cos(angle * Math.PI / 180),
-                    speed * Math.sin(angle * Math.PI / 180)
-                );
-                break;
-            case 'right':
-                this.move(
-                    speed * Math.cos(angle * Math.PI / 180) * -1,
-                    speed * Math.sin(angle * Math.PI / 180) * -1
-                );
-                break;
-        }
-    }
-
-    getCoordsTowardsDirection(x, y, direction, angle, speed) {
-        switch (direction) {
-            case 'front':
-                return {
-                    x: x + speed * Math.sin(angle * Math.PI / 180),
-                    y: y + speed * Math.cos(angle * Math.PI / 180) * -1
-                };
-                break;
-            case 'back':
-                return {
-                    x: x + speed * Math.cos(angle * Math.PI / 180),
-                    y: y + speed * Math.sin(angle * Math.PI / 180)
-                };
-                break;
-            case 'left':
-                return {
-                    x: x + speed * Math.cos(angle * Math.PI / 180),
-                    y: y + speed * Math.sin(angle * Math.PI / 180)
-                };
-                break;
-            case 'right':
-                return {
-                    x: x + speed * Math.cos(angle * Math.PI / 180) * -1,
-                    y: y + speed * Math.sin(angle * Math.PI / 180) * -1
-                };
-                break;
-        }
     }
 
     destroyAfter(time) {
@@ -131,16 +48,11 @@ export class GameObject {
             return;
         }
 
-        this.components.forEach(c => c.update());
-        this.object.rotate(this.angle);
-        this.isVisible = this.x >= this.game.visibleArea.x && this.x <= this.game.visibleArea.x2 && this.y >= this.game.visibleArea.y && this.y <= this.game.visibleArea.y2;
-
-        this.object.left = this.x - this.game.visibleArea.x;
-        this.object.top = this.y - this.game.visibleArea.y;
+        this.componentKeys.forEach(key => this.components[key].update());
     }
 
     render() {
-        this.components.forEach(c => c.render());
+        this.componentKeys.forEach(key => this.components[key].render());
     }
 
     destroy(reason) {
@@ -150,7 +62,7 @@ export class GameObject {
     }
     
     onDestroy() {
-        this.components.forEach(c => c.onDestroy && c.onDestroy());
+        this.componentKeys.forEach(key => this.components[key].onDestroy && this.components[key].onDestroy());
         setTimeout(() => this.disposables.forEach(d => d()), 200);
     }
 
@@ -183,13 +95,6 @@ export class GameObject {
         this.game.context.fill();
         this.game.context.rotate(-radians);
         this.game.context.translate(-centerX,-centerY);
-    }
-
-    getCenterCanvasCoords() {
-        return {
-            x: this.x - this.game.visibleArea.x,
-            y: this.y - this.game.visibleArea.y,
-        };
     }
 
     drawImage(image, x, y, scale, rotation) {

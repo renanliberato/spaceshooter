@@ -1,6 +1,7 @@
 import { GameObject } from '../gameobject';
 import { AudioManager } from '../../audios/AudioManager';
 import { Bullet } from '../bullet';
+import { TransformBehaviour } from './transformBehaviour';
 
 export class ShipBFireBehaviour extends GameObject
 {
@@ -26,12 +27,14 @@ export class ShipBFireBehaviour extends GameObject
         }
         this.lastFireTime = this.gameobject.game.time;
 
-        this.gameobject.emitter.emit("FireShot", {
-            matchId: this.gameobject.game.matchId,
-            id: this.gameobject.id,
-            x: this.gameobject.x,
-            y: this.gameobject.y,
-            angle: this.gameobject.angle
+        this.gameobject.getComponent(TransformBehaviour, gameobjectTransform => {
+            this.gameobject.emitter.emit("FireShot", {
+                matchId: this.gameobject.game.matchId,
+                id: this.gameobject.id,
+                x: gameobjectTransform.x,
+                y: gameobjectTransform.y,
+                angle: gameobjectTransform.angle
+            });
         });
 
         this.executeShoot();
@@ -39,14 +42,14 @@ export class ShipBFireBehaviour extends GameObject
 
     executeShoot() {
         const bullet1 = this.createBullet();
-        bullet1.rotateAngle(-30);
+        bullet1.getComponent(TransformBehaviour).rotateAngle(-30);
         this.gameobject.game.instantiateEntity(bullet1);
 
         const bullet2 = this.createBullet();
         this.gameobject.game.instantiateEntity(bullet2);
 
         const bullet3 = this.createBullet();
-        bullet3.rotateAngle(30);
+        bullet3.getComponent(TransformBehaviour).rotateAngle(30);
         this.gameobject.game.instantiateEntity(bullet3);
         
         if (this.gameobject.isVisible)

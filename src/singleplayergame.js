@@ -2,6 +2,7 @@ import { Player } from './entities/player';
 import { Enemy } from './entities/enemy';
 import { EnemyMark } from './entities/enemyMark';
 import { getGame } from './helpers/game';
+import { TransformBehaviour } from './entities/components/transformBehaviour';
 
 const enemiesPerDifficulty = {
     easy: 3,
@@ -19,8 +20,10 @@ export const initSinglePlayerGame = (cancellationToken, username, ship, difficul
 
     [...Array(enemiesPerDifficulty[difficulty]).keys()].forEach(element => {
         var enemy = new Enemy(game);
-        enemy.x = Math.random() * game.map.width;
-        enemy.y = Math.random() * game.map.height;
+        enemy.getComponent(TransformBehaviour, transform => {
+            transform.x = Math.random() * game.map.width;
+            transform.y = Math.random() * game.map.height;
+        })
         game.instantiateEntity(enemy);
         game.instantiateEntity(new EnemyMark(game, game.player, enemy));
     });

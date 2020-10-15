@@ -1,5 +1,6 @@
 import { GameObject } from '../gameobject';
 import { loadImage } from 'canvas';
+import { TransformBehaviour } from './transformBehaviour';
 
 export class ImageRendererBehaviour extends GameObject
 {
@@ -14,8 +15,10 @@ export class ImageRendererBehaviour extends GameObject
     }
 
     render() {
-        const centerCoords = this.gameobject.getCenterCanvasCoords();
-        if (this.image)
-            this.drawImage(this.image, centerCoords.x, centerCoords.y, this.scale, this.gameobject.angle)
+        this.gameobject.getComponent(TransformBehaviour, gameobjectTransform => {
+            const centerCoords = gameobjectTransform.getCenterCanvasCoords();
+            if (this.image)
+                this.drawImage(this.image, centerCoords.x, centerCoords.y, this.scale, gameobjectTransform.angle)
+        });
     }
 }

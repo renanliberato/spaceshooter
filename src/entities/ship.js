@@ -4,6 +4,7 @@ import { Trail } from './trail';
 import { HealthBehaviour } from './components/healthBehaviour';
 import { isMobile } from '../config';
 import IMAGES from '../images/images';
+import { TransformBehaviour } from './components/transformBehaviour';
 
 export class Ship extends GameObject {
     constructor(game, color) {
@@ -13,10 +14,6 @@ export class Ship extends GameObject {
         this.particles = []
         this.isShip = true;
         this.tag = 'ship';
-        this.dx = 0;
-        this.dy = 0;
-        this.width = 25;
-        this.height = 25;
         this.rotateSpeed = 4;
         this.accelerationForce = 0.04;
         this.dashForce = 7;
@@ -37,6 +34,11 @@ export class Ship extends GameObject {
         this.acceleratingBackwards = false;
 
         this.addComponent(new HealthBehaviour(this, this.game, 10));
+        this.addComponent(new TransformBehaviour(game));
+        this.getComponent(TransformBehaviour, transform => {
+            transform.width = 25;
+            transform.height = 25;
+        });
     }
 
     getHealth() {
@@ -44,91 +46,117 @@ export class Ship extends GameObject {
     }
 
     createTrail() {
-        if (this.game.time - this.lastTrailTime <= this.trailSpeed || this.dy == 0) {
-            return;
-        }
-        this.lastTrailTime = this.game.time;
-        
-        var t = new Trail(this.game, this);
-        t.destroyAfter(this.trailSpeed * 4);
-        t.moveAccordingToAngle('left', this.angle, this.game.sizeFromWidth(1));
-        t.moveAccordingToAngle('front', this.angle, this.height * -1);
-        this.game.instantiateEntity(t);
-        
-        var t = new Trail(this.game, this);
-        t.destroyAfter(this.trailSpeed * 4);
-        t.moveAccordingToAngle('right', this.angle, this.game.sizeFromWidth(1));
-        t.moveAccordingToAngle('front', this.angle, this.height * -1);
-        this.game.instantiateEntity(t);
+        this.getComponent(TransformBehaviour, transform => {
+            if (this.game.time - this.lastTrailTime <= this.trailSpeed || transform.dy == 0) {
+                return;
+            }
+            this.lastTrailTime = this.game.time;
+            
+            var t = new Trail(this.game, this);
+            t.destroyAfter(this.trailSpeed * 4);
+            this.game.instantiateEntity(t);
+    
+            t.getComponent(TransformBehaviour, trailTransform => {
+                this.getComponent(TransformBehaviour, transform => {
+                    trailTransform.moveAccordingToAngle('left', transform.angle, this.game.sizeFromWidth(1));
+                    trailTransform.moveAccordingToAngle('front', transform.angle, transform.height * -1);
+                });
+            });
+            
+            var t = new Trail(this.game, this);
+            t.destroyAfter(this.trailSpeed * 4);
+            this.game.instantiateEntity(t);
+            
+            t.getComponent(TransformBehaviour, trailTransform => {
+                this.getComponent(TransformBehaviour, transform => {
+                    trailTransform.moveAccordingToAngle('right', transform.angle, this.game.sizeFromWidth(1));
+                    trailTransform.moveAccordingToAngle('front', transform.angle, transform.height * -1);
+                });
+            });
+        });
     }
 
     accelerateFrontwards() {
-        this.dy = Math.min(this.maxSpeed, this.dy + this.acceleratingFrontwards * this.game.sizeFromHeight(this.accelerationForce));
+        this.getComponent(TransformBehaviour, transform => {
+            transform.dy = Math.min(this.maxSpeed, transform.dy + this.acceleratingFrontwards * this.game.sizeFromHeight(this.accelerationForce));
+        });
     }
 
     accelerateBackwards() {
-        this.dy = Math.max(-this.maxSpeed, this.dy - this.acceleratingBackwards * this.game.sizeFromHeight(this.accelerationForce));
+        this.getComponent(TransformBehaviour, transform => {
+            transform.dy = Math.max(-this.maxSpeed, transform.dy - this.acceleratingBackwards * this.game.sizeFromHeight(this.accelerationForce));
+        });
     }
 
     deaccelerateFrontwards() {
-        if (!this.acceleratingFrontwards && this.dy > 0)
-            this.dy -= this.game.sizeFromHeight(this.accelerationForce);
+        this.getComponent(TransformBehaviour, transform => {
+            if (!this.acceleratingFrontwards && transform.dy > 0)
+                transform.dy -= this.game.sizeFromHeight(this.accelerationForce);
+        });
     }
 
     deaccelerateBackwards() {
-        if (!this.acceleratingBackwards && this.dy < 0)
-            this.dy += this.game.sizeFromHeight(this.accelerationForce);
+        this.getComponent(TransformBehaviour, transform => {
+            if (!this.acceleratingBackwards && transform.dy < 0)
+                transform.dy += this.game.sizeFromHeight(this.accelerationForce);
+        });
     }
 
     dashLeft() {
-        this.dashingLeft = true;
-        this.dx = this.game.sizeFromWidth(this.dashForce) * -1;
+        this.getComponent(TransformBehaviour, transform => {
+            this.dashingLeft = true;
+            transform.dx = this.game.sizeFromWidth(this.dashForce) * -1;
+        });
     }
 
     dashRight() {
-        this.dashingRight = true;
-        this.dx = this.game.sizeFromWidth(this.dashForce);
+        this.getComponent(TransformBehaviour, transform => {
+            this.dashingRight = true;
+            transform.dx = this.game.sizeFromWidth(this.dashForce);
+        });
     }
 
     moveShip() {
-        if (!this.acceleratingFrontwards && !this.acceleratingBackwards && Math.abs(this.dy) <= 0.1) {
-            this.dy = 0;
-        }
-
-        this.accelerateFrontwards();
-        this.deaccelerateFrontwards();
-
-        this.accelerateBackwards();
-        this.deaccelerateBackwards();
-
-        if (this.rotatingLeft) {
-            this.rotateAngle(this.rotateSpeed * -1);
-        }
-
-        if (this.rotatingRight) {
-            this.rotateAngle(this.rotateSpeed);
-        }
-
-        if (this.dashingRight) {
-            if (this.dx > this.game.sizeFromWidth(this.dashDecreaseTreshold)) {
-                this.dx -= this.game.sizeFromWidth(this.dashDecreaseForce);
-            } else {
-                this.dx = 0;
-                this.dashingRight = false;
+        this.getComponent(TransformBehaviour, transform => {
+            if (!this.acceleratingFrontwards && !this.acceleratingBackwards && Math.abs(transform.dy) <= 0.1) {
+                transform.dy = 0;
             }
-        }
 
-        if (this.dashingLeft) {
-            if (this.dx < this.game.sizeFromWidth(this.dashDecreaseTreshold)) {
-                this.dx += this.game.sizeFromWidth(this.dashDecreaseForce);
-            } else {
-                this.dx = 0;
-                this.dashingLeft = false;
+            this.accelerateFrontwards();
+            this.deaccelerateFrontwards();
+
+            this.accelerateBackwards();
+            this.deaccelerateBackwards();
+
+            if (this.rotatingLeft) {
+                transform.rotateAngle(this.rotateSpeed * -1);
             }
-        }
 
-        this.moveAccordingToAngle('front', this.angle, this.dy);
-        this.moveAccordingToAngle('left', this.angle, this.dx);
+            if (this.rotatingRight) {
+                transform.rotateAngle(this.rotateSpeed);
+            }
+
+            if (this.dashingRight) {
+                if (transform.dx > this.game.sizeFromWidth(this.dashDecreaseTreshold)) {
+                    transform.dx -= this.game.sizeFromWidth(this.dashDecreaseForce);
+                } else {
+                    transform.dx = 0;
+                    this.dashingRight = false;
+                }
+            }
+
+            if (this.dashingLeft) {
+                if (transform.dx < this.game.sizeFromWidth(this.dashDecreaseTreshold)) {
+                    transform.dx += this.game.sizeFromWidth(this.dashDecreaseForce);
+                } else {
+                    transform.dx = 0;
+                    this.dashingLeft = false;
+                }
+            }
+
+            transform.moveAccordingToAngle('front', transform.angle, transform.dy);
+            transform.moveAccordingToAngle('left', transform.angle, transform.dx);
+        });
     }
 
     update() {
@@ -136,40 +164,46 @@ export class Ship extends GameObject {
         this.createTrail();
         this.moveShip();
 
-        if (this.id == this.game.player.id && this.game.isConnected && --this.updateToServerOn <= 0) {
-            this.emitter.emit("ShipPositionUpdated", {
-                name: "ShipPositionUpdated",
-                shipId: this.id,
-                x: this.x,
-                y: this.y,
-                dx: this.dx,
-                dy: this.dy,
-                angle: this.angle,
-                health: this.getHealth().health,
-                rotatingLeft: this.rotatingLeft,
-                rotatingRight: this.rotatingRight,
-                dashingLeft: this.dashingLeft,
-                dashingRight: this.dashingRight,
-                acceleratingFrontwards: this.acceleratingFrontwards,
-                acceleratingBackwards: this.acceleratingBackwards,
-            });
-            this.updateToServerOn = 1;
-        }
+        this.getComponent(TransformBehaviour, transform => {
+            if (this.id == this.game.player.id && this.game.isConnected && --this.updateToServerOn <= 0) {
+                this.emitter.emit("ShipPositionUpdated", {
+                    name: "ShipPositionUpdated",
+                    shipId: this.id,
+                    x: transform.x,
+                    y: transform.y,
+                    dx: transform.dx,
+                    dy: transform.dy,
+                    angle: transform.angle,
+                    health: this.getHealth().health,
+                    rotatingLeft: this.rotatingLeft,
+                    rotatingRight: this.rotatingRight,
+                    dashingLeft: this.dashingLeft,
+                    dashingRight: this.dashingRight,
+                    acceleratingFrontwards: this.acceleratingFrontwards,
+                    acceleratingBackwards: this.acceleratingBackwards,
+                });
+                this.updateToServerOn = 1;
+            }
+        });
     }
 
     render() {
         super.render();
-        const centerCoords = this.getCenterCanvasCoords();
+        this.getComponent(TransformBehaviour, transform => {
+            const centerCoords = transform.getCenterCanvasCoords();
 
-        this.game.context.font = "12px Comic Sans MS";
-        this.game.context.fillStyle = '#fff';
-        this.game.context.fillText(this.username, centerCoords.x - (this.username.length * 3), centerCoords.y - this.width - 10);
+            this.game.context.font = "12px Comic Sans MS";
+            this.game.context.fillStyle = '#fff';
+            this.game.context.fillText(this.username, centerCoords.x - (this.username.length * 3), centerCoords.y - transform.width - 10);
+        });
     }
 
     onDestroy() {
         super.onDestroy();
 
-        if (this.isVisible)
+        this.getComponent(TransformBehaviour, transform => {
+            if (transform.isVisible)
             AudioManager.play(AudioManager.audios.explosion);
+        });
     }
 }

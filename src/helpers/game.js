@@ -1,4 +1,5 @@
 import { Wall } from '../entities/wall';
+import { TransformBehaviour } from '../entities/components/transformBehaviour';
 
 export function getCanvas(height, width) {
     const canvas = document.getElementById('arena');
@@ -67,12 +68,14 @@ export function getGame(matchId, cancellationToken, height, width) {
             game.time += dt;
             game.dt = dt;
 
-            game.visibleArea = {
-                x: game.player.x + game.player.width / 2 - width / 2,
-                x2: game.player.x + game.player.width / 2 + width / 2,
-                y: game.player.y + game.player.height / 2 - height / 2,
-                y2: game.player.y + game.player.height / 2 + height / 2,
-            }
+            game.player.getComponent(TransformBehaviour, playerTransform => {
+                game.visibleArea = {
+                    x: playerTransform.x + playerTransform.width / 2 - width / 2,
+                    x2: playerTransform.x + playerTransform.width / 2 + width / 2,
+                    y: playerTransform.y + playerTransform.height / 2 - height / 2,
+                    y2: playerTransform.y + playerTransform.height / 2 + height / 2,
+                }
+            })
 
             game.entities.forEach(e => e.update());
 

@@ -10,6 +10,8 @@ export class ShipDamageAnimationBehaviour extends GameObject {
         this.image1 = image1;
         this.image2 = image2;
         this.image3 = image3;
+
+        this.startDamageAnimation = this.startDamageAnimation.bind(this);
     }
 
     startDamageAnimation() {

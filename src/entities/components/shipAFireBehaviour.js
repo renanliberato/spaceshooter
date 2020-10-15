@@ -1,6 +1,7 @@
 import { GameObject } from '../gameobject';
 import { AudioManager } from '../../audios/AudioManager';
 import { Bullet } from '../bullet';
+import { TransformBehaviour } from './transformBehaviour';
 
 export class ShipAFireBehaviour extends GameObject
 {
@@ -26,12 +27,14 @@ export class ShipAFireBehaviour extends GameObject
         }
         this.lastFireTime = this.gameobject.game.time;
 
-        this.gameobject.emitter.emit("FireShot", {
-            matchId: this.gameobject.game.matchId,
-            id: this.gameobject.id,
-            x: this.gameobject.x,
-            y: this.gameobject.y,
-            angle: this.gameobject.angle
+        this.gameobject.getComponent(TransformBehaviour, gameobjectTransform => {
+            this.gameobject.emitter.emit("FireShot", {
+                matchId: this.gameobject.game.matchId,
+                id: this.gameobject.id,
+                x: gameobjectTransform.x,
+                y: gameobjectTransform.y,
+                angle: gameobjectTransform.angle
+            });
         });
 
         this.executeShoot();
@@ -39,14 +42,14 @@ export class ShipAFireBehaviour extends GameObject
 
     executeShoot() {
         const bullet1 = this.createBullet();
-        bullet1.moveAccordingToAngle('left', bullet1.angle, 10);
+        bullet1.getComponent(TransformBehaviour, transform => transform.moveAccordingToAngle('left', transform.angle, 10));
         this.gameobject.game.instantiateEntity(bullet1);
 
         const bullet2 = this.createBullet();
         this.gameobject.game.instantiateEntity(bullet2);
 
         const bullet3 = this.createBullet();
-        bullet3.moveAccordingToAngle('right', bullet3.angle, 10);
+        bullet3.getComponent(TransformBehaviour, transform => transform.moveAccordingToAngle('right', transform.angle, 10));
         this.gameobject.game.instantiateEntity(bullet3);
         
         if (this.gameobject.isVisible)

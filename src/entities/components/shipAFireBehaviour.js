@@ -50,7 +50,7 @@ export class ShipAFireBehaviour extends GameObject
         bullet3.transform.moveAccordingToAngle('right', bullet3.transform.angle, 10);
         this.gameobject.game.instantiateEntity(bullet3);
         
-        if (this.gameobject.isVisible)
+        if (this.gameobject.transform.isVisible)
             AudioManager.play(AudioManager.audios.shoot);
     }
 

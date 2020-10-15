@@ -45,7 +45,7 @@ export class ShipCFireBehaviour extends GameObject
             this.gameobject.game.instantiateEntity(bullet);
         })
         
-        if (this.gameobject.isVisible)
+        if (this.gameobject.transform.isVisible)
             AudioManager.play(AudioManager.audios.shoot);
     }
 

@@ -1,7 +1,7 @@
 import { Ship } from './ship';
 import { HealthBehaviour } from './components/healthBehaviour';
 import { ShipABehaviour } from './components/shipABehaviour';
-import { TransformBehaviour } from './components/transformBehaviour';
+
 
 export class Enemy extends Ship {
     constructor(game) {
@@ -23,29 +23,25 @@ export class Enemy extends Ship {
 
         const player = players[0];
 
-        this.getComponent(TransformBehaviour, transform => {
-            player.getComponent(TransformBehaviour, playerTransform => {
-                const distanceFromPlayer = Math.abs((transform.x - playerTransform.x + transform.y - playerTransform.y) / 2);
-    
-                const isFarFromPlayer = distanceFromPlayer > 80;
-    
-                this.shipBehaviour.fireBehaviour.isFiring = false;
-                this.acceleratingFrontwards = false;
+        const distanceFromPlayer = Math.abs((this.transform.x - player.transform.x + this.transform.y - player.transform.y) / 2);
+
+        const isFarFromPlayer = distanceFromPlayer > 80;
+
+        this.shipBehaviour.fireBehaviour.isFiring = false;
+        this.acceleratingFrontwards = false;
+        this.acceleratingBackwards = false;
+        
+        if (this.shouldAct()) {
+            const angleTowardsPlayer = this.transform.getAngleTowardsObject(player.transform);
+            this.transform.rotateToAngle(angleTowardsPlayer);
+
+            if (isFarFromPlayer) {
+                this.acceleratingFrontwards = true;
                 this.acceleratingBackwards = false;
-                
-                if (this.shouldAct()) {
-                    const angleTowardsPlayer = transform.getAngleTowardsObject(playerTransform);
-                    transform.rotateToAngle(angleTowardsPlayer);
-    
-                    if (isFarFromPlayer) {
-                        this.acceleratingFrontwards = true;
-                        this.acceleratingBackwards = false;
-                    } else {
-                        this.shipBehaviour.fireBehaviour.isFiring = true;
-                    }
-                }
-            })
-        })
+            } else {
+                this.shipBehaviour.fireBehaviour.isFiring = true;
+            }
+        }
     }
 
     shouldAct() {

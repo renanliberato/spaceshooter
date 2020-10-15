@@ -1,5 +1,6 @@
 const uuid = require("uuid");
 import { createNanoEvents } from 'nanoevents';
+import { TransformBehaviour } from './components/transformBehaviour';
 
 export class GameObject {
     constructor(game) {
@@ -14,6 +15,9 @@ export class GameObject {
         this.disposables = [];
 
         this.emitter = createNanoEvents();
+
+        this.transform = new TransformBehaviour(this.game);
+        this.addComponent(this.transform);
     }
 
     addComponent(c) {

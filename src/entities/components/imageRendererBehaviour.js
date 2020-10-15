@@ -1,6 +1,6 @@
 import { GameObject } from '../gameobject';
 import { loadImage } from 'canvas';
-import { TransformBehaviour } from './transformBehaviour';
+
 
 export class ImageRendererBehaviour extends GameObject
 {
@@ -11,14 +11,14 @@ export class ImageRendererBehaviour extends GameObject
 
         loadImage(image).then(loadedImage => {
             this.image = loadedImage;
+            this.gameobject.transform.width = this.image.width * this.scale;
+            this.gameobject.transform.height = this.image.width * this.scale;
         });
     }
 
     render() {
-        this.gameobject.getComponent(TransformBehaviour, gameobjectTransform => {
-            const centerCoords = gameobjectTransform.getCenterCanvasCoords();
-            if (this.image)
-                this.drawImage(this.image, centerCoords.x, centerCoords.y, this.scale, gameobjectTransform.angle)
-        });
+        const centerCoords = this.gameobject.transform.getCenterCanvasCoords();
+        if (this.image)
+            this.drawImage(this.image, centerCoords.x, centerCoords.y, this.scale, this.gameobject.transform.angle)
     }
 }

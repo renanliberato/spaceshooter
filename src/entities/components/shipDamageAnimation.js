@@ -7,15 +7,10 @@ export class ShipDamageAnimation extends GameObject {
         super(game);
         this.destroyAfter(1);
 
-        this.addComponent(new TransformBehaviour(this.game));
-        this.getComponent(TransformBehaviour, transform => {
-            owner.getComponent(TransformBehaviour, ownerTransform => {
-                transform.x = ownerTransform.x;
-                transform.y = ownerTransform.y;
-                transform.dy = Math.random() * 4;
-                transform.angle = Math.random() * 360;
-            });
-        });
+        this.transform.x = owner.transform.x;
+        this.transform.y = owner.transform.y;
+        this.transform.dy = Math.random() * 4;
+        this.transform.angle = Math.random() * 360;
 
         this.addComponent(new ImageRendererBehaviour(this, this.game, image, 0.5));
     }
@@ -23,10 +18,8 @@ export class ShipDamageAnimation extends GameObject {
     update() {
         super.update();
 
-        this.getComponent(TransformBehaviour, transform => {
-            if (transform.dy > 0)
-                transform.dy -= 0.1
-            transform.moveAccordingToAngle('front', transform.angle, transform.dy);
-        });
+        if (this.transform.dy > 0)
+            this.transform.dy -= 0.1
+        this.transform.moveAccordingToAngle('front', this.transform.angle, this.transform.dy);
     }
 }

@@ -7,7 +7,7 @@ import { EnemyPlayer } from './entities/enemyPlayer';
 import { API_BASE_URL } from './config';
 import { HealthBehaviour } from './entities/components/healthBehaviour';
 import { getGame } from './helpers/game';
-import { TransformBehaviour } from './entities/components/transformBehaviour';
+
 
 export const initGame = (cancellationToken, username, ship, matchId) => {
     const game = getGame(matchId, cancellationToken, window.innerHeight, window.innerWidth);
@@ -61,13 +61,11 @@ export const initGame = (cancellationToken, username, ship, matchId) => {
                     return;
 
                 enemy.getHealth().health = health;
-                enemy.getComponent(TransformBehaviour, transform => {
-                    transform.x = x;
-                    transform.y = y;
-                    transform.dx = dx;
-                    transform.dy = dy;
-                    transform.angle = angle;
-                })
+                enemy.transform.x = x;
+                enemy.transform.y = y;
+                enemy.transform.dx = dx;
+                enemy.transform.dy = dy;
+                enemy.transform.angle = angle;
                 Object.keys(filteredProps).forEach(key => enemy[key] = filteredProps[key]);
             case "TookDamage":
                 game.withEntityFromId(ev.id, (e) => e.onTookDamage(ev.id, ev.amount, ev.health))

@@ -5,7 +5,7 @@ import { ShipBBehaviour } from './components/shipBBehaviour';
 import { ShipCBehaviour } from './components/shipCBehaviour';
 import { HealthBehaviour } from './components/healthBehaviour';
 import { isMobile } from '../config';
-import { TransformBehaviour } from './components/transformBehaviour';
+
 
 const keycode = require('keycode');
 
@@ -34,10 +34,8 @@ export class Player extends Ship {
 
         const Class = shipToClass[ship];
         this.addComponent(new Class(this, this.game, 'blue', 'enemy'));
-        this.getComponent(TransformBehaviour, transform => {
-            transform.x = 100;
-            transform.y = 100;
-        });
+        this.transform.x = 100;
+        this.transform.y = 100;
 
         if (!isMobile) {
 
@@ -168,33 +166,31 @@ export class Player extends Ship {
         }
         this.lastDashTrailTime = this.game.time;
         
-        this.getComponent(TransformBehaviour, transform => {
-            if (this.canDash()) {
-                var t = new Trail(this.game, this);
-                t.destroyAfter(0.01 * 4);
-                t.getComponent(TransformBehaviour).moveAccordingToAngle('left', transform.angle, transform.width + this.game.sizeFromWidth(1));
-                this.game.instantiateEntity(t);
-    
-                var t = new Trail(this.game, this);
-                t.destroyAfter(0.01 * 4);
-                t.getComponent(TransformBehaviour).moveAccordingToAngle('right', transform.angle, transform.width + this.game.sizeFromWidth(1));
-                this.game.instantiateEntity(t);
-            }
-    
-            if (transform.dx < 0) {
-                var t = new Trail(this.game, this);
-                t.destroyAfter(this.trailSpeed * 4);
-                t.getComponent(TransformBehaviour).moveAccordingToAngle('left', transform.angle, transform.width + this.game.sizeFromWidth(1));
-                this.game.instantiateEntity(t);
-            }
-            
-            if (transform.dx > 0) {
-                var t = new Trail(this.game, this);
-                t.destroyAfter(this.trailSpeed * 4);
-                t.moveAccordingToAngle('right', transform.angle, transform.width + this.game.sizeFromWidth(1));
-                this.game.instantiateEntity(t);
-            }
-        });
+        if (this.canDash()) {
+            var t = new Trail(this.game, this);
+            t.destroyAfter(0.01 * 4);
+            t.transform.moveAccordingToAngle('left', this.transform.angle, this.transform.width * 0.5 + this.game.sizeFromWidth(1));
+            this.game.instantiateEntity(t);
+
+            var t = new Trail(this.game, this);
+            t.destroyAfter(0.01 * 4);
+            t.transform.moveAccordingToAngle('right', this.transform.angle, this.transform.width * 0.5 + this.game.sizeFromWidth(1));
+            this.game.instantiateEntity(t);
+        }
+
+        if (this.transform.dx < 0) {
+            var t = new Trail(this.game, this);
+            t.destroyAfter(this.trailSpeed * 4);
+            t.transform.moveAccordingToAngle('left', this.transform.angle, this.transform.width * 0.5 + this.game.sizeFromWidth(1));
+            this.game.instantiateEntity(t);
+        }
+        
+        if (this.transform.dx > 0) {
+            var t = new Trail(this.game, this);
+            t.destroyAfter(this.trailSpeed * 4);
+            t.transform.moveAccordingToAngle('right', this.transform.angle, this.transform.width * 0.5 + this.game.sizeFromWidth(1));
+            this.game.instantiateEntity(t);
+        }
     }
 
     onDestroy() {

@@ -1,8 +1,6 @@
-import { GameObject } from "../gameobject";
-
-export class TransformBehaviour extends GameObject {
+export class TransformBehaviour {
     constructor(game) {
-        super(game);
+        this.game = game;
         this.angle = 0;
         this.x = 0;
         this.y = 0;
@@ -46,6 +44,12 @@ export class TransformBehaviour extends GameObject {
      */
     getAngleTowardsObject(transform) {
         return (Math.atan2(transform.y - this.y, transform.x - this.x) * 180 / Math.PI) + 90;
+    }
+
+    moveAwayFromObject(transform, distance) {
+        const angle = this.getAngleTowardsObject(transform);
+
+        this.moveAccordingToAngle('back', angle, distance);
     }
 
     moveAccordingToAngle(direction, angle, speed) {
@@ -107,9 +111,10 @@ export class TransformBehaviour extends GameObject {
     }
 
     update() {
-        super.update();
         this.isVisible = this.x >= this.game.visibleArea.x && this.x <= this.game.visibleArea.x2 && this.y >= this.game.visibleArea.y && this.y <= this.game.visibleArea.y2;
     }
+
+    render() {}
 
     getCenterCanvasCoords() {
         return {

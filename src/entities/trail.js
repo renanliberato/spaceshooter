@@ -7,29 +7,19 @@ export class Trail extends GameObject
         super(game);
         this.owner = owner;
         
-        this.addComponent(new TransformBehaviour(game));
-
-        this.getComponent(TransformBehaviour, transform => {
-            this.owner.getComponent(TransformBehaviour, ownerTransform => {
-                transform.x = ownerTransform.x;
-                transform.y = ownerTransform.y;
-                transform.dy = ownerTransform.dy;
-                transform.dx = ownerTransform.dx;
-                transform.rotateToAngle(ownerTransform.angle);
-            });
-        });
+        this.transform.x = this.owner.transform.x;
+        this.transform.y = this.owner.transform.y;
+        this.transform.dy = this.owner.transform.dy;
+        this.transform.dx = this.owner.transform.dx;
+        this.transform.rotateToAngle(this.owner.transform.angle);
 
         this.distantiationSpeed = 0;
     }
 
     update() {
         super.update();
-        this.getComponent(TransformBehaviour, transform => {
-            this.owner.getComponent(TransformBehaviour, ownerTransform => {
-                transform.dy = ownerTransform.dy;
-                transform.dx = ownerTransform.dx;
-            });
-        });
+        this.transform.dy = this.owner.transform.dy;
+        this.transform.dx = this.owner.transform.dx;
 
         if (this.game.time > this.destroyAt) {
             this.destroy();
@@ -38,18 +28,16 @@ export class Trail extends GameObject
 
     render() {
         super.render();
-        this.getComponent(TransformBehaviour, transform => {
-            const centerCoords = transform.getCenterCanvasCoords();
-            this.drawPolygon(
-                centerCoords.x,
-                centerCoords.y,
-                4,
-                2,
-                1,
-                this.owner.color,
-                this.owner.color,
-                transform.angle
-            );
-        });
+        const centerCoords = this.transform.getCenterCanvasCoords();
+        this.drawPolygon(
+            centerCoords.x,
+            centerCoords.y,
+            4,
+            2,
+            1,
+            this.owner.color,
+            this.owner.color,
+            this.transform.angle
+        );
     }
 }

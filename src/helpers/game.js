@@ -1,6 +1,3 @@
-import { Wall } from '../entities/wall';
-import { TransformBehaviour } from '../entities/components/transformBehaviour';
-
 export function getCanvas(height, width) {
     const canvas = document.getElementById('arena');
     canvas.setAttribute('height', height);
@@ -68,14 +65,12 @@ export function getGame(matchId, cancellationToken, height, width) {
             game.time += dt;
             game.dt = dt;
 
-            game.player.getComponent(TransformBehaviour, playerTransform => {
-                game.visibleArea = {
-                    x: playerTransform.x + playerTransform.width / 2 - width / 2,
-                    x2: playerTransform.x + playerTransform.width / 2 + width / 2,
-                    y: playerTransform.y + playerTransform.height / 2 - height / 2,
-                    y2: playerTransform.y + playerTransform.height / 2 + height / 2,
-                }
-            })
+            game.visibleArea = {
+                x: game.player.transform.x + game.player.transform.width / 2 - width / 2,
+                x2: game.player.transform.x + game.player.transform.width / 2 + width / 2,
+                y: game.player.transform.y + game.player.transform.height / 2 - height / 2,
+                y2: game.player.transform.y + game.player.transform.height / 2 + height / 2,
+            }
 
             game.entities.forEach(e => e.update());
 
@@ -90,7 +85,7 @@ export function getGame(matchId, cancellationToken, height, width) {
         }
     };
 
-    game.instantiateEntity(new Wall(game, game.map.width / 2, game.map.height / 2, game.map.width + 50));
+    // game.instantiateEntity(new Wall(game, game.map.width / 2, game.map.height / 2, game.map.width + 50));
 
     window.game = game;
 

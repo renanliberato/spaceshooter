@@ -17,7 +17,7 @@ export class Wall extends GameObject {
     update() {
         super.update();
         this.game.entities.forEach(entity => {
-            if (collides(this.transform, entity.transform) && entity.isShip) {
+            if (collides(this, entity) && entity.isShip) {
                 entity.transform.moveAwayFromObject(this.transform, 1);
                 entity.transform.dx = 0;
                 entity.transform.dy = 0;

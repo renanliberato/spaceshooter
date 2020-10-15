@@ -13,6 +13,7 @@ export class ImageRendererBehaviour extends GameObject
             this.image = loadedImage;
             this.gameobject.transform.width = this.image.width * this.scale;
             this.gameobject.transform.height = this.image.width * this.scale;
+            this.gameobject.collider.updateCollider();
         });
     }
 

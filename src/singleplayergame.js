@@ -28,8 +28,8 @@ export const initSinglePlayerGame = (cancellationToken, username, ship, difficul
         game.instantiateEntity(new EnemyMark(game, game.player, enemy));
     });
 
-    [...Array(Math.floor(Math.random() * 20) + 10).keys()].forEach(k => {
-        game.instantiateEntity(new InofensiveStaticMeteor(game, Math.random() * 1000, Math.random() * 1000, Math.random() * 2));
+    [...Array(10).keys()].forEach(k => {
+        game.instantiateEntity(new InofensiveStaticMeteor(game, parseInt(Math.random() * 1000), parseInt(Math.random() * 1000), 1));
     });
 
     game.time = 0;

@@ -35,7 +35,7 @@ export class Bullet extends GameObject {
 
         var hitAnyone = false;
         this.game.entities.filter(e => e.isShip && e.id != this.owner.id && (!this.targetTag || e.tag == this.targetTag)).forEach(ship => {
-            if (collides(this.transform, ship.transform)) {
+            if (collides(this, ship)) {
                 if (this.transform.isVisible)
                     AudioManager.play(AudioManager.audios.hit);
                 

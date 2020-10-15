@@ -18,13 +18,13 @@ export class InofensiveStaticMeteor extends GameObject {
     update() {
         super.update();
         this.game.entities.forEach(entity => {
-            if (entity.isShip && collides(this.transform, entity.transform)) {
-                entity.transform.moveAwayFromObject(this.transform, 5);
+            if (entity.isShip && collides(this, entity)) {
+                entity.transform.moveAwayFromObject(this.transform, 2);
                 entity.transform.dx = 0;
                 entity.transform.dy = 0;
             }
 
-            if (entity.isBullet && collides(this.transform, entity.transform)) {
+            if (entity.isBullet && collides(this, entity)) {
                 entity.destroy();
             }
         });

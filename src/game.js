@@ -7,6 +7,7 @@ import { EnemyPlayer } from './entities/enemyPlayer';
 import { API_BASE_URL } from './config';
 import { HealthBehaviour } from './entities/components/healthBehaviour';
 import { getGame } from './helpers/game';
+import { InofensiveStaticMeteor } from './entities/meteor';
 
 
 export const initGame = (cancellationToken, username, ship, matchId) => {
@@ -48,6 +49,10 @@ export const initGame = (cancellationToken, username, ship, matchId) => {
                 enemiesLeft: remainingPlayers - 1
             }
         }));
+    });
+
+    simplerConnection.on("MeteorsAddedToMatch", function (meteors) {
+        meteors.forEach(meteor => game.instantiateEntity(new InofensiveStaticMeteor(game, meteor.x, meteor.y, 1)));
     });
 
     simplerConnection.on("EventBroadcasted", function(ev) {

@@ -33,8 +33,6 @@ export const initSinglePlayerGame = (cancellationToken, username, ship, difficul
     });
 
     game.time = 0;
-    var lastUpdate = Date.now();
-    var enemyMarks = [];
 
     document.dispatchEvent(new CustomEvent('game_started', {
         detail: {

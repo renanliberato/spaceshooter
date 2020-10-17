@@ -170,13 +170,11 @@ export class Player extends Ship {
             var t = new Trail(this.game, this);
             t.destroyAfter(0.01 * 4);
             t.transform.moveAccordingToAngle('left', this.transform.angle, this.transform.width * 0.5 + this.game.sizeFromWidth(1));
-            t.transform.rotateAngle(-45);
             this.game.instantiateEntity(t);
 
             var t = new Trail(this.game, this);
             t.destroyAfter(0.01 * 4);
             t.transform.moveAccordingToAngle('right', this.transform.angle, this.transform.width * 0.5 + this.game.sizeFromWidth(1));
-            t.transform.rotateAngle(45);
             this.game.instantiateEntity(t);
         }
 
@@ -184,7 +182,7 @@ export class Player extends Ship {
             var t = new Trail(this.game, this);
             t.destroyAfter(this.trailSpeed * 4);
             t.transform.moveAccordingToAngle('left', this.transform.angle, this.transform.width * 0.5 + this.game.sizeFromWidth(1));
-            t.transform.rotateAngle(45);
+            t.transform.rotateAngle(this.transform.dx * 10);
             this.game.instantiateEntity(t);
         }
         
@@ -192,7 +190,7 @@ export class Player extends Ship {
             var t = new Trail(this.game, this);
             t.destroyAfter(this.trailSpeed * 4);
             t.transform.moveAccordingToAngle('right', this.transform.angle, this.transform.width * 0.5 + this.game.sizeFromWidth(1));
-            t.transform.rotateAngle(-45);
+            t.transform.rotateAngle(this.transform.dx * 10);
             this.game.instantiateEntity(t);
         }
     }

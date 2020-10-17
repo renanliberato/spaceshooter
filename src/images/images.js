@@ -16,7 +16,8 @@ const IMAGES = {
     ufo_red: require('./ufoRed.png'),
     ufo_yellow: require('./ufoYellow.png'),
     laser_blue: require('./Lasers/laserBlue02.png'),
-    meteor_big: require('./Meteors/meteorBrown_big1.png')
+    meteor_big: require('./Meteors/meteorBrown_big1.png'),
+    fire: require('./Effects/fire01.png'),
 }
 
 export default IMAGES;

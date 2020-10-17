@@ -1,5 +1,7 @@
 import { GameObject } from "./gameobject";
 import { TransformBehaviour } from "./components/transformBehaviour";
+import { ImageRendererBehaviour } from "./components/imageRendererBehaviour";
+import IMAGES from "../images/images";
 
 export class Trail extends GameObject
 {
@@ -14,6 +16,7 @@ export class Trail extends GameObject
         this.transform.rotateToAngle(this.owner.transform.angle);
 
         this.distantiationSpeed = 0;
+        this.addComponent(new ImageRendererBehaviour(this, this.game, IMAGES.fire, 0.5));
     }
 
     update() {
@@ -24,20 +27,5 @@ export class Trail extends GameObject
         if (this.game.time > this.destroyAt) {
             this.destroy();
         }
-    }
-
-    render() {
-        super.render();
-        const centerCoords = this.transform.getCenterCanvasCoords();
-        this.drawPolygon(
-            centerCoords.x,
-            centerCoords.y,
-            4,
-            2,
-            1,
-            this.owner.color,
-            this.owner.color,
-            this.transform.angle
-        );
     }
 }
